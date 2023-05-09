@@ -6,7 +6,6 @@ function Login() {
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
 
-
     const handleClick = () => {
         setShow(!show);
     }
@@ -54,6 +53,5 @@ function Login() {
         </VStack>
     )
 }
-
 
 export default Login;
