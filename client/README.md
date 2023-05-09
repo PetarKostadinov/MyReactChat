@@ -16,3 +16,4 @@
 5. mongoose.Schema- chatModel
 6. mongoose.Schema- messageModel
 7. mongoose.Schema- userModel
+8. Register Form added (with chacra components )
