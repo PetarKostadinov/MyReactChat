@@ -19,3 +19,4 @@
 8. Register Form added (with chacra components )
 9. Login Form added (with chacra components )
 10. Connected to Mongo DB
+11. npm install jsonwebtoken - JWT creation added with JWT_SECRET 
