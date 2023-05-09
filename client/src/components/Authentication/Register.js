@@ -67,7 +67,7 @@ function Register() {
                 </InputGroup>
             </FormControl>
             <FormControl id='pic'>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Upload Image</FormLabel>
                 <InputGroup>
                     <Input
                         type={'file'}
