@@ -21,3 +21,4 @@
 10. Connected to Mongo DB
 11. npm install jsonwebtoken - JWT creation added with JWT_SECRET 
 12. npm i bcryptjs, login and register (req, res) works by postman
+13. npm install cloudinary
