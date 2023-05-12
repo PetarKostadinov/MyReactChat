@@ -51,7 +51,7 @@ const accessChat = asyncHandler(async (req, res) => {
 
 const fetchChats = asyncHandler(async (req, res) => {
     try {
-        Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+        await Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
             .populate('users', '-password')
             .populate('grooupAdmin', '-password')
             .populate('latestMessage')
@@ -129,7 +129,7 @@ const renameGroupChat = asyncHandler(async (req, res) => {
 
 const addToGroup = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
-    const added = Chat.findByIdAndUpdate(
+    const added = await Chat.findByIdAndUpdate(
         chatId,
         {
             $push: { users: userId }
@@ -150,7 +150,7 @@ const addToGroup = asyncHandler(async (req, res) => {
 
 const removeFromGroupChat = asyncHandler(async (req, res) => {
     const { chatId, userId } = req.body;
-    const removed = Chat.findByIdAndUpdate(
+    const removed = await Chat.findByIdAndUpdate(
         chatId,
         {
             $pull: { users: userId }
