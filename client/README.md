@@ -23,3 +23,4 @@
 12. npm i bcryptjs, login and register (req, res) works by postman
 13. npm install cloudinary
 14. Register implemented with uploading pic
+15. npm i @chakra-ui/icons - Header implementation
