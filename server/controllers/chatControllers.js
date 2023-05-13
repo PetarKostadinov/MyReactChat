@@ -5,7 +5,8 @@ const Chat = require('../models/chatModel');
 const accessChat = asyncHandler(async (req, res) => {
     const { userId } = req.body;
 
-    if (userId) {
+
+    if (!userId) {
         console.log('UserId param not sent with request');
         return res.sendStatus(400);
     }
@@ -51,9 +52,12 @@ const accessChat = asyncHandler(async (req, res) => {
 
 const fetchChats = asyncHandler(async (req, res) => {
     try {
+
+
+
         await Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
             .populate('users', '-password')
-            .populate('grooupAdmin', '-password')
+            .populate('groupAdmin', '-password')
             .populate('latestMessage')
             .sort({ updatedAt: -1 })
             .then(async (results) => {

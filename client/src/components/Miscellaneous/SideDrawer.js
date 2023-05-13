@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, Input, Menu, MenuButton, MenuItem, MenuList, Text, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
+import { Avatar, Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, Input, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
 import { ChatState } from '../Authentication/Context/ChatProvider';
@@ -16,7 +16,7 @@ function SideDrawer() {
     const [loading, setLoading] = useState(false);
     const [loadingChat, setLoadingChat] = useState();
     const toast = useToast();
-    const { user, setSelectedChat } = ChatState();
+    const { user, setSelectedChat, chats, setChats } = ChatState();
 
     const navigate = useNavigate();
 
@@ -45,13 +45,11 @@ function SideDrawer() {
 
             const config = {
                 headers: {
-                    authorization: `Bearer ${user.token}`
+                    Authorization: `Bearer ${user.token}`
                 }
             };
-            // console.log("🚀 ~ file: SideDrawer.js:50 ~ handleSearch ~ config:", config.headers)
 
             const { data } = await axios.get(`/api/user?search=${search}`, config);
-
 
             setLoading(false);
             setSearchResult(data);
@@ -70,20 +68,34 @@ function SideDrawer() {
 
     const accessChat = async (userId) => {
         try {
+            setLoadingChat(true);
             const config = {
                 headers: {
-                    'Conten-type': 'application/json',
+                    "Conten-Type": "application/json",
                     Authorization: `Bearer ${user.token}`
                 }
             };
-            const { data } = await axios.get('/api/chat', { userId }, config);
+            console.log({ userId })
+            const { data } = await axios.post('/api/chat', { userId }, config);
+
+
+            if (!chats.find((c) => c._id === data._id)) {
+                setChats([data, ...chats]);
+            }
 
             setSelectedChat(data);
             setLoadingChat(false);
             onClose();
 
         } catch (error) {
-
+            toast({
+                title: 'Error Fetching the Chat',
+                description: error.message,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'bottom-left'
+            })
         }
     }
 
@@ -99,7 +111,7 @@ function SideDrawer() {
             >
                 <Tooltip
                     label='Search User to chat'
-                    hasArow
+                    hasArrow
                     placement='bottom-end'
                 >
                     <Button
@@ -107,7 +119,7 @@ function SideDrawer() {
                         onClick={onOpen}
                     >
                         <i className='fas fa-search'></i>
-                        <Text d={{ base: 'none', md: 'flex' }} px='4'>
+                        <Text display={{ base: 'none', md: 'flex' }} px='4'>
                             Search User
                         </Text>
                     </Button>
@@ -162,6 +174,7 @@ function SideDrawer() {
                                 />
                             ))
                         )}
+                        {loadingChat && <Spinner ml={'auto'} display={'flex'} />}
                     </DrawerBody>
                 </DrawerContent>
             </Drawer>
