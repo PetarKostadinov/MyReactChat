@@ -24,3 +24,5 @@
 13. npm install cloudinary
 14. Register implemented with uploading pic
 15. npm i @chakra-ui/icons - Header implementation
+16. My Chats section created 
+17. Creation of chats to mongo works 
