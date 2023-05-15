@@ -154,6 +154,7 @@ function GroupChatModal({ children }) {
                             {selectedUsers.map((u) => (
                                 <UserBadgeItem key={u._id} user={u} handleFunction={() => handleDelete(u)} />
                             ))}
+                        </Box>
                             {loading ? <div>loading</div>
                                 :
                                 (searchResult?.slice(0, 4)
@@ -162,7 +163,7 @@ function GroupChatModal({ children }) {
                                         user={user}
                                         handleFunction={() => handleGrooup(user)}
                                     />)))}
-                        </Box>
+
                     </ModalBody>
 
                     <ModalFooter>

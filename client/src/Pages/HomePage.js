@@ -17,9 +17,9 @@ function HomePage() {
     }, [navigate]);
 
     return (
-        <Container maxW='xl' centerContent>
+        <Container maxWidth='xl' centerContent>
             <Box
-                d='flex'
+                display='flex'
                 justifyContent='center'
                 p={3}
                 bg={'white'}
