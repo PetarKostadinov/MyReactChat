@@ -28,4 +28,4 @@
 17. Creation of chats to mongo works 
 18. Create Grooup Chat
 19. Chat Box UI done
-20. 
+20. Updating Group Chat Name Implemented
