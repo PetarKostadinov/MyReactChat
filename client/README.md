@@ -29,3 +29,4 @@
 18. Create Grooup Chat
 19. Chat Box UI done
 20. Updating Group Chat Name Implemented
+21. Group Chat modal / update chaName / remove User / leave the group implemented
