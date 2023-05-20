@@ -6,6 +6,9 @@ import { getSender, getSenderFull } from './config/ChatLogics';
 import ProfileModal from './Miscellaneous/ProfileModal';
 import UpdateGroupChatModal from './Miscellaneous/UpdateGroupChatModal';
 import axios from 'axios';
+import './styles.css';
+import ScrollableChat from './ScrollableChat';
+
 
 function SingleChat({ fetchAgain, setFetchAgain }) {
 
@@ -62,7 +65,7 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                     config
                 );
 
-                console.log(data);
+
 
                 setNewMessages('');
                 setMessages([...messages, data]);
@@ -120,7 +123,9 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                                 {selectedChat.chatName.toUpperCase()}
                                 {<UpdateGroupChatModal
                                     fetchAgain={fetchAgain}
-                                    setFetchAgain={setFetchAgain} />}
+                                        setFetchAgain={setFetchAgain}
+                                        fetchMessages={fetchMessages}
+                                    />}
 
                             </>
                         )}
@@ -139,12 +144,17 @@ function SingleChat({ fetchAgain, setFetchAgain }) {
                         {loading ? (
                             <Spinner
                                 size='xl'
-                                w={20}
+                                w={10}
                                 alignSelf={'center'}
                                 margin={'auto'}
                             />
                         ) : (
-                            <div>Messages</div>
+                                <div
+                                    className='messages'
+
+                                >
+                                    <ScrollableChat messages={messages} />
+                                </div>
                         )}
                         <FormControl
                             onKeyDown={sendMessage}

@@ -31,3 +31,4 @@
 20. Updating Group Chat Name Implemented
 21. Group Chat modal / update chaName / remove User / leave the group implemented
 22. Messages routes, controlers implemented to backend
+23. isSameSender, isLastMessage logic implemented
