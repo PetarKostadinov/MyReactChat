@@ -1,48 +1,52 @@
-import React, { useEffect, useState } from 'react'
-import { ChatState } from './Authentication/Context/ChatProvider';
-import { Box, Button, Stack, Text, useToast } from '@chakra-ui/react';
-import axios from 'axios';
-import { AddIcon } from '@chakra-ui/icons';
-import ChatLoading from '../components/ChatLoading'
-import { getSender } from './config/ChatLogics';
-import GroupChatModal from './Miscellaneous/GroupChatModal';
+import { AddIcon } from "@chakra-ui/icons";
+import { Box, Stack, Text } from "@chakra-ui/layout";
+import { useToast } from "@chakra-ui/toast";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-function MyChats({ fetchAgain }) {
+import ChatLoading from "./ChatLoading";
 
+import { Button } from "@chakra-ui/react";
+import { ChatState } from "../Context/ChatProvider";
+import GroupChatModal from "./Miscellaneous/GroupChatModal";
+import { getSender } from "../config/ChatLogics";
+
+
+const MyChats = ({ fetchAgain }) => {
     const [loggedUser, setLoggedUser] = useState();
-    const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
+
+    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
     const toast = useToast();
 
     const fetchChats = async () => {
+        // console.log(user._id);
         try {
             const config = {
                 headers: {
-
-                    Authorization: `Bearer ${user.token}`
-                }
+                    Authorization: `Bearer ${user.token}`,
+                },
             };
 
-            const { data } = await axios.get('/api/chat', config);
-
+            const { data } = await axios.get("/api/chat", config);
             setChats(data);
-
         } catch (error) {
             toast({
-                title: 'Error Occured!',
-                description: 'Failed to load chats',
-                status: 'error',
+                title: "Error Occured!",
+                description: "Failed to Load the chats",
+                status: "error",
                 duration: 5000,
                 isClosable: true,
-                position: 'bottom-left'
-            })
+                position: "bottom-left",
+            });
         }
-    }
+    };
 
     useEffect(() => {
-        setLoggedUser(JSON.parse(localStorage.getItem('userInfo')));
+        setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
         fetchChats();
-    }, [fetchAgain])
+        // eslint-disable-next-line
+    }, [fetchAgain]);
 
     return (
         <Box
@@ -120,7 +124,7 @@ function MyChats({ fetchAgain }) {
                 )}
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default MyChats;

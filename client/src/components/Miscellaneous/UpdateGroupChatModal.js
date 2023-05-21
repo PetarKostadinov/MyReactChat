@@ -1,7 +1,7 @@
 import { ViewIcon } from '@chakra-ui/icons';
 import { Box, Button, FormControl, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react'
-import { ChatState } from '../Authentication/Context/ChatProvider';
+import { ChatState } from '../../Context/ChatProvider';
 import UserBadgeItem from '../UserAvatar/UserBadgeItem';
 import axios from 'axios';
 import UserListItem from '../UserAvatar/UserListItem';

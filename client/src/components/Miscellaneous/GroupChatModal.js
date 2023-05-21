@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
-import { ChatState } from '../Authentication/Context/ChatProvider';
+import { ChatState } from '../../Context/ChatProvider';
 import axios from 'axios';
 import UserListItem from '../UserAvatar/UserListItem';
 import UserBadgeItem from '../UserAvatar/UserBadgeItem';
