@@ -32,3 +32,5 @@
 21. Group Chat modal / update chaName / remove User / leave the group implemented
 22. Messages routes, controlers implemented to backend
 23. isSameSender, isLastMessage logic implemented
+24. npm i socket.io (to server) // npm i socket.io-client (to client)
+25. socket implemented 
