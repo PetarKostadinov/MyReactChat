@@ -120,6 +120,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         selectedChatCompare = selectedChat;
         // eslint-disable-next-line
     }, [selectedChat]);
+    const pause = () => {
+    }
 
     useEffect(() => {
         socket.on("message recieved", (newMessageRecieved) => {
