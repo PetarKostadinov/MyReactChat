@@ -35,3 +35,4 @@
 24. npm i socket.io (to server) // npm i socket.io-client (to client)
 25. socket implemented
 26. npm i react-lottie --force
+27. Notifications appears at the bell icon - top right corner
