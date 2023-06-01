@@ -36,3 +36,4 @@
 25. socket implemented
 26. npm i react-lottie --force
 27. Notifications appears at the bell icon - top right corner
+28. npm run build - DEPLOYMENT
