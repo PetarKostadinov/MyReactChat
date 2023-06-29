@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon server/server.js"
   },
-  "homepage": "https://petarkostadinov.github.io/MyReactChat/",
+
   "author": "",
   "license": "ISC",
   "dependencies": {

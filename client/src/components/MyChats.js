@@ -15,12 +15,12 @@ import { getSender } from "../config/ChatLogics";
 const MyChats = ({ fetchAgain }) => {
     const [loggedUser, setLoggedUser] = useState();
 
-    const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
-
+    const {selectedChat, setSelectedChat, user, chats, setChats} = ChatState();
+    //console.log(chats);
     const toast = useToast();
 
     const fetchChats = async () => {
-        // console.log(user._id);
+
         try {
             const config = {
                 headers: {
@@ -28,7 +28,8 @@ const MyChats = ({ fetchAgain }) => {
                 },
             };
 
-            const { data } = await axios.get("/api/chat", config);
+            const {data} = await axios.get("/api/chat", config);
+            console.log("🚀 ~ file: MyChats.js:32 ~ fetchChats ~ data:", data)
             setChats(data);
         } catch (error) {
             toast({
@@ -90,7 +91,7 @@ const MyChats = ({ fetchAgain }) => {
                 borderRadius="lg"
                 overflowY="hidden"
             >
-                {chats ? (
+                {chats.length > 0 ? (
                     <Stack overflowY="scroll">
                         {chats.map((chat) => (
                             <Box
