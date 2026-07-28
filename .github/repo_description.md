@@ -1,0 +1,1 @@
+Real-time chat application built with React, Socket.IO, and Node.js. Features responsive design, instant messaging, and live user presence.
