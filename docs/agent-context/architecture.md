@@ -44,5 +44,6 @@ The misspelled event string `message recieved` is currently part of the internal
 - Backend output: `dist/server/`
 - Frontend output: `client/build/`
 - Secrets: local/deployment environment only; `.env` is ignored
-- Frontend production Socket.IO URL currently lives in `SingleChat.tsx`
-
+- Frontend API origin: `REACT_APP_API_URL` at build time
+- Frontend Socket.IO origin: `REACT_APP_SOCKET_URL`, falling back to `REACT_APP_API_URL`
+- Backend allowed browser origins: `CLIENT_URL` (comma-separated)

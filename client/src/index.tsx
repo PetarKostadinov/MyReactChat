@@ -6,7 +6,12 @@ import App from './App';
 import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter } from 'react-router-dom'
 import ChatProvider from './Context/ChatProvider';
+import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, '');
+if (apiUrl) {
+  axios.defaults.baseURL = apiUrl;
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

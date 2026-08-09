@@ -30,9 +30,16 @@ const MyChats = ({fetchAgain}) => {
 
             setChats(data);
         } catch (error) {
+            const status = error.response?.status;
+            const serverMessage = error.response?.data?.message;
+            const description = status === 401
+                ? "Your session is no longer valid. Please log out and sign in again."
+                : serverMessage || (process.env.NODE_ENV === "production" && !process.env.REACT_APP_API_URL
+                    ? "The production API URL is not configured."
+                    : "Failed to load chats. Check that the API server is running.");
             toast({
-                title: "Error Occured!",
-                description: "Failed to Load the chats",
+                title: "Could not load chats",
+                description,
                 status: "error",
                 duration: 5000,
                 isClosable: true,

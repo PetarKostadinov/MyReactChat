@@ -12,6 +12,22 @@ dotenv.config();
 connectDB();
 const app = express();
 
+const allowedOrigins = process.env.CLIENT_URL
+    ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
+    : ["http://localhost:3000", "https://mychat-2ce41.web.app"];
+
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (origin && allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+        res.header('Vary', 'Origin');
+        res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    }
+    if (req.method === 'OPTIONS') return res.sendStatus(204);
+    next();
+});
+
 app.use(express.json());
 
 
@@ -31,10 +47,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 const server = app.listen(PORT, () => console.log(`Server Started on PORT ${PORT}`));
-
-const allowedOrigins = process.env.CLIENT_URL
-    ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
-    : ["http://localhost:3000", "https://mychat-2ce41.web.app"];
 
 const io = require('socket.io')(server, {
     pingTimeout: 60000,
