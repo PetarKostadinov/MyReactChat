@@ -22,7 +22,8 @@ Do not load every context file by default.
 3. State assumptions only when they materially affect behavior.
 4. Implement the smallest complete fix.
 5. Verify with the commands for the changed area.
-6. Report the outcome, verification, and any remaining risk.
+6. For a significant change, review `README.md` and update it in the same task when user-facing behavior, setup, environment variables, commands, architecture, or deployment changed.
+7. Report the outcome, verification, documentation updates, and any remaining risk.
 
 For a large request that splits into independent lanes, specialists may investigate frontend, backend, realtime, and tests in parallel. Keep one owner for integration and final verification. Do not delegate small or tightly coupled work.
 
@@ -35,6 +36,7 @@ For a large request that splits into independent lanes, specialists may investig
 - Prefer functional React state updates in asynchronous listeners.
 - Clean up timers and event listeners in React effects.
 - Preserve user changes and avoid editing generated `dist/` or `client/build/` output.
+- Keep `README.md` current after significant changes. Do not update it for internal refactors that do not affect behavior, setup, architecture, commands, or operations.
 
 ## Commands
 
@@ -49,4 +51,3 @@ Run both type checks and both builds for cross-cutting changes.
 ## Authority
 
 For review, explanation, or diagnosis, inspect and report without changing code. For build, change, or fix requests, make in-scope local edits and run non-destructive checks. Ask before destructive actions, external writes/deployments, purchases, or meaningful scope expansion.
-
