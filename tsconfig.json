@@ -4,6 +4,7 @@
     "module": "Node16",
     "moduleResolution": "Node16",
     "moduleDetection": "force",
+    "types": ["node"],
     "outDir": "dist",
     "rootDir": ".",
     "esModuleInterop": true,
