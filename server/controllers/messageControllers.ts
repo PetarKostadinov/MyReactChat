@@ -19,6 +19,16 @@ const sendMessage = asyncHandler(async (req, res) => {
     };
 
     try {
+        const chat = await Chat.findById(chatId).select('users');
+        if (!chat) {
+            res.status(404);
+            throw new Error('Chat not found');
+        }
+        if (!chat.users.some((userId) => userId.equals(req.user._id))) {
+            res.status(403);
+            throw new Error('Not authorized to send messages to this chat');
+        }
+
         var message = await Message.create(newMessage);
 
         message = await message.populate('sender', 'name pic');
@@ -28,20 +38,30 @@ const sendMessage = asyncHandler(async (req, res) => {
             select: 'name pic email'
         });
 
-        await Chat.findOneAndUpdate(req.body.chatId, {
+        await Chat.findByIdAndUpdate(chatId, {
             latestMessage: message
         });
 
         res.json(message);
 
     } catch (error) {
-        res.status(400);
+        if (res.statusCode === 200) res.status(400);
         throw new Error(error.message);
     }
 });
 
 const allMessages = asyncHandler(async (req, res) => {
     try {
+        const chat = await Chat.findById(req.params.chatId).select('users');
+        if (!chat) {
+            res.status(404);
+            throw new Error('Chat not found');
+        }
+        if (!chat.users.some((userId) => userId.equals(req.user._id))) {
+            res.status(403);
+            throw new Error('Not authorized to view messages in this chat');
+        }
+
         const messages = await Message.find({ chat: req.params.chatId })
             .populate('sender', 'name pic email')
             .populate('chat');
@@ -49,7 +69,7 @@ const allMessages = asyncHandler(async (req, res) => {
         res.json(messages);
 
     } catch (error) {
-        res.status(400);
+        if (res.statusCode === 200) res.status(400);
         throw new Error(error.message);
     }
 });

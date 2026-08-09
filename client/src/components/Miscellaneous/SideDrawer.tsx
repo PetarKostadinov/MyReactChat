@@ -28,7 +28,7 @@ function SideDrawer() {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const logoutHandler = () => {
-        localStorage.clear();
+        localStorage.removeItem('userInfo');
         navigate('/');
     }
 
@@ -53,9 +53,7 @@ function SideDrawer() {
                 }
             };
 
-            const { data } = await axios.get(`/api/user?search=${search}`, config);
-
-            setLoading(false);
+            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(search)}`, config);
             setSearchResult(data);
 
         } catch (error) {
@@ -67,6 +65,8 @@ function SideDrawer() {
                 isClosable: true,
                 position: 'bottom-left'
             })
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -82,8 +82,8 @@ function SideDrawer() {
 
             const { data } = await axios.post('/api/chat', { userId }, config);
 
-            if (!chats.find((c) => c._id === data._id)) {
-                setChats([data, ...chats]);
+            if (!chats?.find((c) => c._id === data._id)) {
+                setChats([data, ...(chats || [])]);
             }
 
             setSelectedChat(data);
@@ -99,6 +99,9 @@ function SideDrawer() {
                 isClosable: true,
                 position: 'bottom-left'
             })
+        } finally {
+            setLoading(false);
+            setLoadingChat(false);
         }
     }
 

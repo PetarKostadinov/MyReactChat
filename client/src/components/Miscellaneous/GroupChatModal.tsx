@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import axios from 'axios';
@@ -10,7 +10,6 @@ function GroupChatModal({ children }) {
 
     const [groupChatName, setGrupChatName] = useState();
     const [selectedUsers, setSelectedUsers] = useState([]);
-    const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -21,7 +20,6 @@ function GroupChatModal({ children }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const handleSearch = async (query) => {
-        setSearch(query);
         if (!query) {
             return;
         }
@@ -35,7 +33,7 @@ function GroupChatModal({ children }) {
                 }
             };
 
-            const { data } = await axios.get(`/api/user?search=${search}`, config);
+            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(query)}`, config);
 
             setLoading(false);
             setSearchResult(data);
@@ -53,7 +51,7 @@ function GroupChatModal({ children }) {
         }
     };
     const handleSubmit = async () => {
-        if (!groupChatName || !selectedUsers) {
+        if (!groupChatName || selectedUsers.length < 2) {
             toast({
                 title: 'All fields are required',
                 status: 'warning',
@@ -81,7 +79,7 @@ function GroupChatModal({ children }) {
             );
 
             setLoading(false);
-            setChats([data, ...chats]);
+            setChats([data, ...(chats || [])]);
             onClose();
             toast({
                 title: 'New Group Chat Created',
@@ -99,6 +97,8 @@ function GroupChatModal({ children }) {
                 isClosable: true,
                 position: 'bottom'
             });
+        } finally {
+            setLoading(false);
         }
     };
     const handleDelete = (delUser) => {

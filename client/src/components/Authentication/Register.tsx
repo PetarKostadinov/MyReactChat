@@ -29,6 +29,7 @@ function Register() {
                 isClosable: true,
                 position: 'bottom'
             });
+            setLoading(false);
             return;
         }
 
@@ -86,6 +87,7 @@ function Register() {
                 isClosable: true,
                 position: 'bottom'
             });
+            setLoading(false);
             return;
         }
 

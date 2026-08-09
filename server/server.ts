@@ -5,8 +5,8 @@ const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
-
-const path = require('path');
+const jwt = require('jsonwebtoken');
+const Chat = require('./models/chatModel');
 
 dotenv.config();
 connectDB();
@@ -30,29 +30,47 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, console.log(`Server Started on PORT ${PORT}`));
+const server = app.listen(PORT, () => console.log(`Server Started on PORT ${PORT}`));
+
+const allowedOrigins = process.env.CLIENT_URL
+    ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim())
+    : ["http://localhost:3000", "https://mychat-2ce41.web.app"];
 
 const io = require('socket.io')(server, {
     pingTimeout: 60000,
     cors: {
 
-        origin: "http://localhost:3000"
+        origin: allowedOrigins
+    }
+});
+
+io.use((socket, next) => {
+    try {
+        const token = socket.handshake.auth?.token;
+        if (!token) return next(new Error('Authentication required'));
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        socket.data.userId = String(decoded.id);
+        next();
+    } catch {
+        next(new Error('Invalid authentication token'));
     }
 });
 
 io.on('connection', (socket) => {
-    let connectedUserId;
+    const connectedUserId = socket.data.userId;
     console.log('connected to socket.io');
+    socket.join(connectedUserId);
 
-    socket.on('setup', (userData) => {
-        connectedUserId = userData._id;
-        socket.join(userData._id);
+    socket.on('setup', () => {
         socket.emit('connected');
     });
 
-    socket.on('join chat', (room) => {
-        socket.join(room);
-        console.log('User Joined The Room: ' + room)
+    socket.on('join chat', async (room) => {
+        const chat = await Chat.exists({ _id: room, users: connectedUserId });
+        if (chat) {
+            socket.join(room);
+            console.log('User Joined The Room: ' + room);
+        }
     });
 
     socket.on('typing', (room) => socket.in(room).emit('typing'))
@@ -62,6 +80,8 @@ io.on('connection', (socket) => {
         var chat = newMessageRecieved.chat;
 
         if (!chat.users) return console.log('chat.users not defined');
+        if (String(newMessageRecieved.sender?._id) !== connectedUserId) return;
+        if (!chat.users.some((user) => String(user._id) === connectedUserId)) return;
         chat.users.forEach(user => {
             if (user._id == newMessageRecieved.sender._id) return;
 
@@ -69,8 +89,8 @@ io.on('connection', (socket) => {
         })
     });
 
-    socket.off('setup', () => {
+    socket.on('disconnect', () => {
         console.log('USER DISCONNECTED');
-        if (connectedUserId) socket.leave(connectedUserId);
+        socket.leave(connectedUserId);
     })
 });

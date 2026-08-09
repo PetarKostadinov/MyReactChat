@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { ViewIcon } from '@chakra-ui/icons';
-import { Box, Button, FormControl, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, FormControl, IconButton, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import UserBadgeItem from '../UserAvatar/UserBadgeItem';
@@ -10,7 +10,6 @@ import UserListItem from '../UserAvatar/UserListItem';
 function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [groupChatName, setGroupChatName] = useState('');
-    const [search, setSearch] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [loading, setLoading] = useState(false);
     const [renameLoading, setRenameLoading] = useState(false);
@@ -64,10 +63,6 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
             setLoading(false);
         }
     };
-    const handleLeaveTheGroup = async () => {
-
-    };
-
     const handleRename = async () => {
         if (!groupChatName) return;
 
@@ -107,7 +102,6 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         setGroupChatName('');
     };
     const handleSearch = async (query) => {
-        setSearch(query);
         if (!query) {
             return;
         }
@@ -121,7 +115,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
                 }
             };
 
-            const { data } = await axios.get(`/api/user?search=${search}`, config);
+            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(query)}`, config);
 
             setLoading(false);
             setSearchResult(data);
@@ -200,7 +194,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
 
     return (
         <>
-            <IconButton display={{ base: 'flex' }} icon={<ViewIcon />} onClick={onOpen}>Open Modal</IconButton>
+            <IconButton aria-label="Edit group chat" display={{ base: 'flex' }} icon={<ViewIcon />} onClick={onOpen}>Open Modal</IconButton>
 
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
