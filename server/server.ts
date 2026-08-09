@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 const Chat = require('./models/chatModel');
 
 dotenv.config();
-connectDB();
 const app = express();
 
 const allowedOrigins = process.env.CLIENT_URL
@@ -45,6 +44,9 @@ app.use(errorHandler);
 
 
 const PORT = process.env.PORT || 5000;
+
+const startServer = async () => {
+await connectDB();
 
 const server = app.listen(PORT, () => console.log(`Server Started on PORT ${PORT}`));
 
@@ -105,4 +107,11 @@ io.on('connection', (socket) => {
         console.log('USER DISCONNECTED');
         socket.leave(connectedUserId);
     })
+});
+
+};
+
+startServer().catch((error) => {
+    console.error(`Failed to start server: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    process.exit(1);
 });
