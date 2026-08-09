@@ -1,0 +1,9 @@
+# Durable decisions
+
+Record only decisions that future tasks need. Do not use this as a work log.
+
+- 2026-08-09: Source code is TypeScript; backend compilation and frontend CRA builds use separate TypeScript configurations.
+- 2026-08-09: HTTP and Socket.IO use the same JWT identity.
+- 2026-08-09: Authorization is enforced server-side for chat membership and group administration.
+- 2026-08-09: Repository context is layered through root and nested `AGENTS.md` files to avoid loading unrelated details.
+
