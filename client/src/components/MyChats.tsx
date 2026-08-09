@@ -12,6 +12,7 @@ import {ChatState} from "../Context/ChatProvider";
 
 const MyChats = ({fetchAgain}) => {
     const [loggedUser, setLoggedUser] = useState();
+    const [loading, setLoading] = useState(true);
 
     const {selectedChat, setSelectedChat, user, chats, setChats} = ChatState();
 
@@ -20,6 +21,7 @@ const MyChats = ({fetchAgain}) => {
     const fetchChats = async () => {
         // console.log(user._id);
         try {
+            setLoading(true);
             const config = {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
@@ -45,6 +47,8 @@ const MyChats = ({fetchAgain}) => {
                 isClosable: true,
                 position: "bottom-left",
             });
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -96,7 +100,9 @@ const MyChats = ({fetchAgain}) => {
                 borderRadius="lg"
                 overflowY="hidden"
             >
-                {chats && chats.length > 0 ? (
+                {loading ? (
+                    <ChatLoading />
+                ) : chats && chats.length > 0 ? (
                     <Stack overflowY="scroll">
                         {chats.map((chat) => (
                             <Box
@@ -126,7 +132,12 @@ const MyChats = ({fetchAgain}) => {
                         ))}
                     </Stack>
                 ) : (
-                    <ChatLoading />
+                    <Box textAlign="center" color="gray.500" p={6}>
+                        <Text fontWeight="semibold">No conversations yet</Text>
+                        <Text fontSize="sm" mt={2}>
+                            Use Search User above, then select someone to start chatting.
+                        </Text>
+                    </Box>
                 )}
             </Box>
         </Box>

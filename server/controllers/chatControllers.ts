@@ -1,4 +1,5 @@
 const asyncHandler = require("express-async-handler");
+const mongoose = require("mongoose");
 const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
 
@@ -12,6 +13,9 @@ const accessChat = asyncHandler(async (req, res) => {
         console.log("UserId param not sent with request");
         return res.sendStatus(400);
     }
+    if (!mongoose.isValidObjectId(userId)) {
+        return res.status(400).send({ message: "Invalid user ID" });
+    }
     if (String(userId) === String(req.user._id)) {
         return res.status(400).send({ message: "You cannot create a chat with yourself" });
     }
@@ -19,24 +23,22 @@ const accessChat = asyncHandler(async (req, res) => {
         return res.status(404).send({ message: "User not found" });
     }
 
-    var isChat = await Chat.find({
+    let chat = await Chat.findOne({
         isGroupChat: false,
-        $and: [
-            { users: { $elemMatch: { $eq: req.user._id } } },
-            { users: { $elemMatch: { $eq: userId } } },
-        ],
+        users: { $all: [req.user._id, userId], $size: 2 },
     })
         .populate("users", "-password")
         .populate("latestMessage");
 
-    isChat = await User.populate(isChat, {
+    chat = await User.populate(chat, {
         path: "latestMessage.sender",
         select: "name pic email",
     });
 
-    if (isChat.length > 0) {
-        res.send(isChat[0]);
-    } else {
+    if (chat) {
+        return res.json(chat);
+    }
+
         var chatData = {
             chatName: "sender",
             isGroupChat: false,
@@ -45,16 +47,15 @@ const accessChat = asyncHandler(async (req, res) => {
 
         try {
             const createdChat = await Chat.create(chatData);
-            const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+            const fullChat = await Chat.findById(createdChat._id).populate(
                 "users",
                 "-password"
             );
-            res.status(200).json(FullChat);
+            res.status(201).json(fullChat);
         } catch (error) {
-            res.status(400);
+            if (res.statusCode === 200) res.status(400);
             throw new Error(error.message);
         }
-    }
 });
 
 //@description     Fetch all chats for a user
@@ -62,18 +63,16 @@ const accessChat = asyncHandler(async (req, res) => {
 //@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
     try {
-        Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+        let results = await Chat.find({ users: req.user._id })
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage")
-            .sort({ updatedAt: -1 })
-            .then(async (results) => {
-                results = await User.populate(results, {
-                    path: "latestMessage.sender",
-                    select: "name pic email",
-                });
-                res.status(200).send(results);
-            });
+            .sort({ updatedAt: -1 });
+        results = await User.populate(results, {
+            path: "latestMessage.sender",
+            select: "name pic email",
+        });
+        res.status(200).json(results);
     } catch (error) {
         res.status(400);
         throw new Error(error.message);
