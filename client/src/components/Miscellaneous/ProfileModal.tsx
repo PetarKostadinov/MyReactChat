@@ -1,10 +1,9 @@
 
-// @ts-nocheck
 import { ViewIcon } from '@chakra-ui/icons';
 import { Button, IconButton, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react';
 import React from 'react'
 
-function ProfileModal({ user, children }) {
+function ProfileModal({ user, children }: { user: import('../../types').User; children?: React.ReactNode }) {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 

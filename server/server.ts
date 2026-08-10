@@ -31,7 +31,7 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-    res.send('API is Runing Successfully !');
+    res.send('API is running successfully');
 });
 
 app.use('/api/user', userRoutes);
@@ -72,7 +72,6 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
     const connectedUserId = socket.data.userId;
-    console.log('connected to socket.io');
     socket.join(connectedUserId);
 
     socket.on('setup', () => {
@@ -83,7 +82,6 @@ io.on('connection', (socket) => {
         const chat = await Chat.exists({ _id: room, users: connectedUserId });
         if (chat) {
             socket.join(room);
-            console.log('User Joined The Room: ' + room);
         }
     });
 
@@ -91,20 +89,19 @@ io.on('connection', (socket) => {
     socket.on('stop typing', (room) => socket.in(room).emit('stop typing'))
 
     socket.on('new message', (newMessageRecieved) => {
-        var chat = newMessageRecieved.chat;
+        const chat = newMessageRecieved.chat;
 
-        if (!chat.users) return console.log('chat.users not defined');
+        if (!chat.users) return;
         if (String(newMessageRecieved.sender?._id) !== connectedUserId) return;
         if (!chat.users.some((user) => String(user._id) === connectedUserId)) return;
         chat.users.forEach(user => {
-            if (user._id == newMessageRecieved.sender._id) return;
+            if (String(user._id) === String(newMessageRecieved.sender._id)) return;
 
             socket.in(user._id).emit('message recieved', newMessageRecieved);
         })
     });
 
     socket.on('disconnect', () => {
-        console.log('USER DISCONNECTED');
         socket.leave(connectedUserId);
     })
 });

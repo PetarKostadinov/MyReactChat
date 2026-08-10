@@ -10,8 +10,7 @@ const accessChat = asyncHandler(async (req, res) => {
     const { userId } = req.body;
 
     if (!userId) {
-        console.log("UserId param not sent with request");
-        return res.sendStatus(400);
+        return res.status(400).send({ message: "User ID is required" });
     }
     if (!mongoose.isValidObjectId(userId)) {
         return res.status(400).send({ message: "Invalid user ID" });
@@ -39,44 +38,31 @@ const accessChat = asyncHandler(async (req, res) => {
         return res.json(chat);
     }
 
-        var chatData = {
-            chatName: "sender",
-            isGroupChat: false,
-            users: [req.user._id, userId],
-        };
+    const chatData = {
+        chatName: "sender",
+        isGroupChat: false,
+        users: [req.user._id, userId],
+    };
 
-        try {
-            const createdChat = await Chat.create(chatData);
-            const fullChat = await Chat.findById(createdChat._id).populate(
-                "users",
-                "-password"
-            );
-            res.status(201).json(fullChat);
-        } catch (error) {
-            if (res.statusCode === 200) res.status(400);
-            throw new Error(error.message);
-        }
+    const createdChat = await Chat.create(chatData);
+    const fullChat = await Chat.findById(createdChat._id).populate("users", "-password");
+    res.status(201).json(fullChat);
 });
 
 //@description     Fetch all chats for a user
 //@route           GET /api/chat/
 //@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
-    try {
-        let results = await Chat.find({ users: req.user._id })
-            .populate("users", "-password")
-            .populate("groupAdmin", "-password")
-            .populate("latestMessage")
-            .sort({ updatedAt: -1 });
-        results = await User.populate(results, {
-            path: "latestMessage.sender",
-            select: "name pic email",
-        });
-        res.status(200).json(results);
-    } catch (error) {
-        res.status(400);
-        throw new Error(error.message);
-    }
+    let results = await Chat.find({ users: req.user._id })
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password")
+        .populate("latestMessage")
+        .sort({ updatedAt: -1 });
+    results = await User.populate(results, {
+        path: "latestMessage.sender",
+        select: "name pic email",
+    });
+    res.status(200).json(results);
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
@@ -97,24 +83,18 @@ const createGroupChat = asyncHandler(async (req, res) => {
 
     users.push(String(req.user._id));
 
-    try {
-        const grooupChat = await Chat.create({
-            chatName: req.body.name,
-            users: users,
-            isGroupChat: true,
-            groupAdmin: req.user
-        });
+    const groupChat = await Chat.create({
+        chatName: req.body.name.trim(),
+        users,
+        isGroupChat: true,
+        groupAdmin: req.user
+    });
 
-        const fullGroupChat = await Chat.findOne({ _id: grooupChat._id })
-            .populate('users', '-password')
-            .populate('groupAdmin', '-password');
+    const fullGroupChat = await Chat.findById(groupChat._id)
+        .populate('users', '-password')
+        .populate('groupAdmin', '-password');
 
-        res.status(200).json(fullGroupChat);
-
-    } catch (error) {
-        res.status(400);
-        throw new Error(error.message);
-    }
+    res.status(201).json(fullGroupChat);
 });
 
 const renameGroupChat = asyncHandler(async (req, res) => {
@@ -144,10 +124,8 @@ const renameGroupChat = asyncHandler(async (req, res) => {
     if (!updatedChat) {
         res.status(404);
         throw new Error('Chat Not Found');
-    } else {
-        res.json(updatedChat);
-
     }
+    res.json(updatedChat);
 });
 
 
@@ -180,10 +158,8 @@ const addToGroup = asyncHandler(async (req, res) => {
     if (!added) {
         res.status(404);
         throw new Error('Chat Not Found!');
-
-    } else {
-        res.json(added);
     }
+    res.json(added);
 })
 
 const removeFromGroupChat = asyncHandler(async (req, res) => {
@@ -213,10 +189,8 @@ const removeFromGroupChat = asyncHandler(async (req, res) => {
     if (!removed) {
         res.status(404);
         throw new Error('Chat Not Found!');
-
-    } else {
-        res.json(removed);
     }
+    res.json(removed);
 })
 
 

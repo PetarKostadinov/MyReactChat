@@ -1,15 +1,15 @@
-// @ts-nocheck
 import { Button, FormControl, FormLabel, Input, InputGroup, InputRightElement, VStack, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { getApiErrorMessage } from '../../config/api';
 
 
 
 function Login() {
-    const [show, setShow] = useState();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
+    const [show, setShow] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const toast = useToast();
     const navigate = useNavigate();
@@ -25,7 +25,7 @@ function Login() {
             toast({
                 title: 'All fields are required',
                 status: 'warning',
-                duration: '5000',
+                duration: 5000,
                 isClosable: true,
                 position: 'bottom'
             });
@@ -53,11 +53,7 @@ function Login() {
             setLoading(false);
             navigate('/chats');
         } catch (error) {
-            const description = axios.isAxiosError(error)
-                ? error.response?.data?.message || (error.request
-                    ? 'Cannot reach the server. Check that the API is running and configured correctly.'
-                    : error.message)
-                : 'An unexpected error occurred. Please try again.';
+            const description = getApiErrorMessage(error, 'An unexpected error occurred. Please try again.');
 
             toast({
                 title: 'Login failed',

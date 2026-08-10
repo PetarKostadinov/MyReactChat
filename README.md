@@ -157,7 +157,7 @@ The health endpoint is:
 GET /
 ```
 
-It returns `API is Runing Successfully !` when the service is available.
+It returns `API is running successfully` when the service is available.
 
 ### Frontend on Firebase Hosting
 
@@ -192,8 +192,10 @@ MyReactChat/
 │   ├── src/
 │   │   ├── components/
 │   │   ├── config/
+│   │   │   └── api.ts
 │   │   ├── Context/
 │   │   ├── Pages/
+│   │   ├── theme.ts
 │   │   └── types.ts
 │   ├── firebase.json
 │   └── tsconfig.json

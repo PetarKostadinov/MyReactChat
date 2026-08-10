@@ -21,3 +21,8 @@ export interface Message {
   content: string;
   chat: Chat;
 }
+
+export interface RefreshChatsProps {
+  fetchAgain: boolean;
+  setFetchAgain: React.Dispatch<React.SetStateAction<boolean>>;
+}

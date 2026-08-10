@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { Avatar, Box, Button, Drawer, DrawerBody, DrawerContent, DrawerHeader, DrawerOverlay, Input, Menu, MenuButton, MenuItem, MenuList, Spinner, Text, Tooltip, useDisclosure, useToast } from '@chakra-ui/react';
 import React, { useState } from 'react'
-import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { BellIcon, ChevronDownIcon, SearchIcon } from '@chakra-ui/icons';
 import { ChatState } from '../../Context/ChatProvider';
 import ProfileModal from './ProfileModal';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +9,7 @@ import ChatLoading from '../ChatLoading';
 import UserListItem from '../UserAvatar/UserListItem';
 import { getSender } from '../../config/ChatLogics';
 import NotificationBadge, { Effect } from 'react-notification-badge';
-
-// import { accessChat } from '../../../../server/controllers/chatControllers';
+import { authConfig, getApiErrorMessage } from '../../config/api';
 
 function SideDrawer() {
 
@@ -35,7 +33,7 @@ function SideDrawer() {
     const handleSearch = async () => {
         if (!search) {
             toast({
-                title: 'Please enter somthing in the search',
+                title: 'Enter a name or email to search',
                 status: 'warning',
                 duration: 5000,
                 isClosable: true,
@@ -47,18 +45,12 @@ function SideDrawer() {
         try {
             setLoading(true);
 
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
-            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(search)}`, config);
+            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(search)}`, authConfig(user.token));
             setSearchResult(data);
 
         } catch (error) {
             toast({
-                title: 'Error Occured!',
+                title: 'Search failed',
                 description: 'Failed to load the search result',
                 status: 'error',
                 duration: 5000,
@@ -70,17 +62,10 @@ function SideDrawer() {
         }
     }
 
-    const accessChat = async (userId) => {
+    const accessChat = async (userId: string) => {
         try {
             setLoadingChatId(userId);
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
-            const { data } = await axios.post('/api/chat', { userId }, config);
+            const { data } = await axios.post('/api/chat', { userId }, authConfig(user.token));
 
             setChats((currentChats = []) =>
                 currentChats.some((chat) => chat._id === data._id)
@@ -95,7 +80,7 @@ function SideDrawer() {
         } catch (error) {
             toast({
                 title: 'Could not start chat',
-                description: error.response?.data?.message || 'The chat server did not accept the request.',
+                description: getApiErrorMessage(error, 'The chat server did not accept the request.'),
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
@@ -130,7 +115,7 @@ function SideDrawer() {
                         aria-label='Search users'
                         px={{ base: 3, md: 4 }}
                     >
-                        <i className='fas fa-search'></i>
+                        <SearchIcon />
                         <Text display={{ base: 'none', md: 'flex' }} px='4'>
                             Search User
                         </Text>

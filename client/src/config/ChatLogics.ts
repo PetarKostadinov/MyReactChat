@@ -1,8 +1,6 @@
 import type { Message, User } from "../types";
 
 export const isSameSenderMargin = (messages: Message[], m: Message, i: number, userId: string): number | "auto" => {
-    // console.log(i === messages.length - 1);
-
     if (
         i < messages.length - 1 &&
         messages[i + 1].sender._id === m.sender._id &&

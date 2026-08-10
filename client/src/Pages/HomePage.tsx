@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect } from 'react'
 import { Box, Container, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from '@chakra-ui/react'
 import Register from '../components/Authentication/Register'

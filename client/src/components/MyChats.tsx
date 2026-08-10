@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {AddIcon} from "@chakra-ui/icons";
 import {Box, Stack, Text} from "@chakra-ui/layout";
 import {useToast} from "@chakra-ui/toast";
@@ -9,9 +8,11 @@ import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./Miscellaneous/GroupChatModal";
 import {Button} from "@chakra-ui/react";
 import {ChatState} from "../Context/ChatProvider";
+import type { RefreshChatsProps, User } from '../types';
+import { authConfig } from '../config/api';
 
-const MyChats = ({fetchAgain}) => {
-    const [loggedUser, setLoggedUser] = useState();
+const MyChats = ({fetchAgain}: Pick<RefreshChatsProps, 'fetchAgain'>) => {
+    const [loggedUser, setLoggedUser] = useState<User>();
     const [loading, setLoading] = useState(true);
 
     const {selectedChat, setSelectedChat, user, chats, setChats} = ChatState();
@@ -19,16 +20,9 @@ const MyChats = ({fetchAgain}) => {
     const toast = useToast();
 
     const fetchChats = async () => {
-        // console.log(user._id);
         try {
             setLoading(true);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
-            const {data} = await axios.get("/api/chat", config); 
+            const {data} = await axios.get("/api/chat", authConfig(user.token));
 
             setChats(data);
         } catch (error) {
@@ -60,7 +54,7 @@ const MyChats = ({fetchAgain}) => {
 
     return (
         <Box
-            d={{base: selectedChat ? "none" : "flex", md: "flex"}}
+            display={{base: selectedChat ? "none" : "flex", md: "flex"}}
             flexDir="column"
             alignItems="center"
             p={{base: 3, lg: 4}}
@@ -75,7 +69,7 @@ const MyChats = ({fetchAgain}) => {
                 px={{ base: 1, sm: 3 }}
                 fontSize={{base: "xl", lg: "2xl"}}
                 fontWeight="bold"
-                d="flex"
+                display="flex"
                 w="100%"
                 justifyContent="space-between"
                 alignItems="center"
@@ -84,7 +78,7 @@ const MyChats = ({fetchAgain}) => {
                 My Chats
                 <GroupChatModal>
                     <Button
-                        d="flex"
+                        display="flex"
                         fontSize={{base: "sm", md: "xs", lg: "sm"}}
                         rightIcon={<AddIcon />}
                         whiteSpace="nowrap"
@@ -94,7 +88,7 @@ const MyChats = ({fetchAgain}) => {
                 </GroupChatModal>
             </Box>
             <Box
-                d="flex"
+                display="flex"
                 flexDir="column"
                 p={{ base: 2, sm: 3 }}
                 bg="gray.50"

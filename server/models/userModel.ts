@@ -3,8 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const userModel = mongoose.Schema(
     {
-        name: { type: String, required: true },
-        email: { type: String, required: true, unique: true },
+        name: { type: String, required: true, trim: true },
+        email: { type: String, required: true, unique: true, trim: true, lowercase: true },
         password: { type: String, required: true },
         pic: { type: String, default: 'https://icon-library.com/images/anonymous-avatar-icon/anonymous-vatar-icon-25.jpg' },
 
@@ -13,7 +13,7 @@ const userModel = mongoose.Schema(
 );
 
 userModel.methods.matchPassword = async function (enteredPassword) {
-    return await bcrypt.compare(enteredPassword, this.password);
+    return bcrypt.compare(enteredPassword, this.password);
 }
 
 userModel.pre('save', async function (next) {

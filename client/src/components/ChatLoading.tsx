@@ -1,25 +1,10 @@
-// @ts-nocheck
 import { Skeleton, Stack } from '@chakra-ui/react';
-import React from 'react'
-
 function ChatLoading() {
     return (
         <Stack>
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
-            <Skeleton height='45px' />
+            {Array.from({ length: 8 }, (_, index) => (
+                <Skeleton key={index} height='45px' borderRadius='lg' />
+            ))}
         </Stack>
     )
 }

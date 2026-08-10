@@ -1,4 +1,3 @@
-// @ts-nocheck
 
 import { ChatState } from '../Context/ChatProvider';
 import { Box } from '@chakra-ui/react';

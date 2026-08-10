@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Avatar } from "@chakra-ui/avatar";
 import { Box } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
@@ -10,8 +9,9 @@ import {
     isSameUser,
 } from "../config/ChatLogics";
 import { ChatState } from "../Context/ChatProvider";
+import type { Message } from '../types';
 
-const ScrollableChat = ({ messages }) => {
+const ScrollableChat = ({ messages }: { messages: Message[] }) => {
     const { user } = ChatState();
 
     return (

@@ -1,16 +1,17 @@
-// @ts-nocheck
 import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import axios from 'axios';
 import UserListItem from '../UserAvatar/UserListItem';
 import UserBadgeItem from '../UserAvatar/UserBadgeItem';
+import type { User } from '../../types';
+import { authConfig, getApiErrorMessage } from '../../config/api';
 
-function GroupChatModal({ children }) {
+function GroupChatModal({ children }: React.PropsWithChildren) {
 
-    const [groupChatName, setGrupChatName] = useState();
-    const [selectedUsers, setSelectedUsers] = useState([]);
-    const [searchResult, setSearchResult] = useState([]);
+    const [groupChatName, setGroupChatName] = useState('');
+    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const [searchResult, setSearchResult] = useState<User[]>([]);
     const [loading, setLoading] = useState(false);
 
     const toast = useToast();
@@ -19,7 +20,7 @@ function GroupChatModal({ children }) {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const handleSearch = async (query) => {
+    const handleSearch = async (query: string) => {
         if (!query) {
             return;
         }
@@ -27,13 +28,7 @@ function GroupChatModal({ children }) {
         try {
             setLoading(true);
 
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
-            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(query)}`, config);
+            const { data } = await axios.get(`/api/user?search=${encodeURIComponent(query)}`, authConfig(user.token));
 
             setLoading(false);
             setSearchResult(data);
@@ -41,10 +36,10 @@ function GroupChatModal({ children }) {
 
         } catch (error) {
             toast({
-                title: 'Error Occured!',
-                description: 'Failed To load Search Result!',
+                title: 'Search failed',
+                description: getApiErrorMessage(error, 'Could not load search results.'),
                 status: 'error',
-                duration: '5000',
+                duration: 5000,
                 isClosable: true,
                 position: 'bottom-left'
             });
@@ -64,18 +59,12 @@ function GroupChatModal({ children }) {
 
         try {
             setLoading(true);
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`
-                }
-            };
-
             const { data } = await axios.post('/api/chat/group',
                 {
                     name: groupChatName,
                     users: JSON.stringify(selectedUsers.map((u) => u._id))
                 },
-                config
+                authConfig(user.token)
             );
 
             setLoading(false);
@@ -101,15 +90,15 @@ function GroupChatModal({ children }) {
             setLoading(false);
         }
     };
-    const handleDelete = (delUser) => {
+    const handleDelete = (delUser: User) => {
         setSelectedUsers(selectedUsers.filter((x) => x._id !== delUser._id));
     };
-    const handleGrooup = (userToAdd) => {
+    const handleGroup = (userToAdd: User) => {
         if (selectedUsers.includes(userToAdd)) {
             toast({
-                title: 'User allredy added',
+                title: 'User already added',
                 status: 'warning',
-                duration: '5000',
+                duration: 5000,
                 isClosable: true,
                 position: 'top'
             });
@@ -136,7 +125,7 @@ function GroupChatModal({ children }) {
                             <Input
                                 placeholder='Chat Name'
                                 mb={3}
-                                onChange={(e) => setGrupChatName(e.target.value)}
+                                onChange={(e) => setGroupChatName(e.target.value)}
                             ></Input>
                         </FormControl>
                         <FormControl>
@@ -161,7 +150,7 @@ function GroupChatModal({ children }) {
                                     .map(user => (<UserListItem
                                         key={user._id}
                                         user={user}
-                                        handleFunction={() => handleGrooup(user)}
+                                        handleFunction={() => handleGroup(user)}
                                     />)))}
 
                     </ModalBody>

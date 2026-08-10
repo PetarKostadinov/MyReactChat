@@ -1,9 +1,9 @@
 
-// @ts-nocheck
 import { Box, Text } from '@chakra-ui/layout';
 import { Avatar } from '@chakra-ui/avatar';
+import type { User } from '../../types';
 
-function UserListItem({ user, handleFunction }) {
+function UserListItem({ user, handleFunction }: { user: User; handleFunction: () => void }) {
 
     return (
         <Box

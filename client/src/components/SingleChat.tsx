@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { FormControl } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Box, Text } from "@chakra-ui/layout";
@@ -6,6 +5,7 @@ import "./styles.css";
 import { IconButton, Spinner, useToast } from "@chakra-ui/react";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useEffect, useRef, useState } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import ProfileModal from "./Miscellaneous/ProfileModal";
@@ -13,23 +13,26 @@ import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
 import animationData from "../animations/typing.json";
 
-import io from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
 import UpdateGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
+import type { Chat, Message, RefreshChatsProps } from '../types';
+import { authConfig } from '../config/api';
 const ENDPOINT =
     process.env.REACT_APP_SOCKET_URL?.replace(/\/$/, "") ||
     process.env.REACT_APP_API_URL?.replace(/\/$/, "") ||
     "http://localhost:5000";
-var socket, selectedChatCompare;
+let socket: Socket | undefined;
+let selectedChatCompare: Chat | undefined;
 
-const SingleChat = ({ fetchAgain, setFetchAgain }) => {
-    const [messages, setMessages] = useState([]);
+const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
+    const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState("");
     const [socketConnected, setSocketConnected] = useState(false);
     const [typing, setTyping] = useState(false);
     const [istyping, setIsTyping] = useState(false);
-    const typingTimeout = useRef();
+    const typingTimeout = useRef<ReturnType<typeof setTimeout>>();
     const toast = useToast();
 
     const defaultOptions = {
@@ -47,24 +50,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         if (!selectedChat) return;
 
         try {
-            const config = {
-                headers: {
-                    Authorization: `Bearer ${user.token}`,
-                },
-            };
-
             setLoading(true);
 
             const { data } = await axios.get(
                 `/api/message/${selectedChat._id}`,
-                config
+                authConfig(user.token)
             );
             setMessages(data);
             socket?.emit("join chat", selectedChat._id);
         } catch (error) {
             toast({
-                title: "Error Occured!",
-                description: "Failed to Load the Messages",
+                title: "Could not load messages",
+                description: "Please try again.",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
@@ -75,16 +72,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
     };
 
-    const sendMessage = async (event) => {
+    const sendMessage = async (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Enter" && newMessage) {
             socket?.emit("stop typing", selectedChat._id);
             try {
-                const config = {
-                    headers: {
-                        "Content-type": "application/json",
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                };
                 setNewMessage("");
                 const { data } = await axios.post(
                     "/api/message",
@@ -92,14 +83,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         content: newMessage,
                         chatId: selectedChat._id,
                     },
-                    config
+                    authConfig(user.token)
                 );
                 socket?.emit("new message", data);
                 setMessages((currentMessages) => [...currentMessages, data]);
             } catch (error) {
                 toast({
-                    title: "Error Occured!",
-                    description: "Failed to send the Message",
+                    title: "Could not send message",
+                    description: "Please try again.",
                     status: "error",
                     duration: 5000,
                     isClosable: true,
@@ -132,31 +123,33 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(() => {
         if (!socket) return;
 
-        const handleMessage = (newMessageRecieved) => {
+        const handleMessage = (newMessageReceived: Message) => {
             if (
                 !selectedChatCompare || // if chat is not selected or doesn't match current chat
-                selectedChatCompare._id !== newMessageRecieved.chat._id
+                selectedChatCompare._id !== newMessageReceived.chat._id
             ) {
                 setNotification((currentNotifications) =>
-                    currentNotifications.some((item) => item._id === newMessageRecieved._id)
+                    currentNotifications.some((item) => item._id === newMessageReceived._id)
                         ? currentNotifications
-                        : [newMessageRecieved, ...currentNotifications]
+                        : [newMessageReceived, ...currentNotifications]
                 );
                 setFetchAgain((current) => !current);
             } else {
                 setMessages((currentMessages) =>
-                    currentMessages.some((item) => item._id === newMessageRecieved._id)
+                    currentMessages.some((item) => item._id === newMessageReceived._id)
                         ? currentMessages
-                        : [...currentMessages, newMessageRecieved]
+                        : [...currentMessages, newMessageReceived]
                 );
             }
         };
 
         socket.on("message recieved", handleMessage);
-        return () => socket.off("message recieved", handleMessage);
+        return () => {
+            socket?.off("message recieved", handleMessage);
+        };
     }, [setFetchAgain, setNotification]);
 
-    const typingHandler = (e) => {
+    const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setNewMessage(e.target.value);
 
         if (!socketConnected) return;
@@ -274,7 +267,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 </>
             ) : (
                     // to get socket.io on same page
-                    <Box d="flex" alignItems="center" justifyContent="center" h="100%">
+                    <Box display="flex" alignItems="center" justifyContent="center" h="100%">
                     <Text fontSize={{ base: "xl", md: "2xl" }} color="gray.500" textAlign="center" px={6}>
                         Select a conversation to start chatting
                     </Text>

@@ -1,10 +1,10 @@
-// @ts-nocheck
 import React from 'react'
 import { ChatState } from '../Context/ChatProvider';
 import { Box } from '@chakra-ui/react';
 import SingleChat from './SingleChat';
+import type { RefreshChatsProps } from '../types';
 
-function ChatBox({ fetchAgain, setFetchAgain }) {
+function ChatBox({ fetchAgain, setFetchAgain }: RefreshChatsProps) {
     const { selectedChat } = ChatState();
     return (
         <Box
