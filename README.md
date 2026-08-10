@@ -140,6 +140,22 @@ The backend build output is `dist/server/`. The frontend build output is `client
 
 ## Production deployment
 
+### Automatic deployment from GitHub
+
+Every push to `master` runs `.github/workflows/deploy.yml`. The workflow verifies both applications, builds the client, and deploys it to Firebase Hosting. Render can deploy the backend automatically from the same push.
+
+Configure these values once under **GitHub repository → Settings → Secrets and variables → Actions**:
+
+| Kind | Name | Value |
+| --- | --- | --- |
+| Secret | `FIREBASE_SERVICE_ACCOUNT_MYCHAT_2CE41` | Firebase service-account JSON with Hosting deployment access |
+| Variable | `REACT_APP_API_URL` | Production backend origin, without `/api` |
+| Variable | `REACT_APP_SOCKET_URL` | Production Socket.IO origin |
+
+The recommended way to create the Firebase service account is Firebase's GitHub integration setup (`firebase init hosting:github`). Store the generated JSON under the secret name above. Never commit the JSON key.
+
+The workflow can also be started manually from the GitHub **Actions** tab. Local deployment commands remain available as a fallback.
+
 ### Backend on Render
 
 Create a Render Web Service from the repository root:

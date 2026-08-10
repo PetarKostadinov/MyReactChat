@@ -23,7 +23,29 @@ Do not load every context file by default.
 4. Implement the smallest complete fix.
 5. Verify with the commands for the changed area.
 6. For a significant change, review `README.md` and update it in the same task when user-facing behavior, setup, environment variables, commands, architecture, or deployment changed.
-7. Report the outcome, verification, documentation updates, and any remaining risk.
+7. Run the context freshness gate below before considering the task complete.
+8. Report the outcome, verification, documentation updates, and any remaining risk.
+
+## Context freshness gate
+
+Durable project context must be updated in the same change that makes it stale. Before finishing any code task, compare the final diff with the context map below. A change is significant when it adds or changes a cross-file flow, invariant, integration, authorization rule, runtime dependency, deployment boundary, environment variable, public command, or user-visible capability.
+
+| Change | Required context update |
+| --- | --- |
+| Runtime flow, component/service responsibility, REST/Socket protocol, data ownership, or deployment boundary | `docs/agent-context/architecture.md` |
+| Long-lived technical choice or non-obvious constraint that future work must preserve | `docs/agent-context/decisions.md` |
+| Setup, command, environment variable, feature, deployment, or operational behavior | `README.md` |
+| Frontend-specific invariant, important path, or verification command | `client/AGENTS.md` |
+| Backend-specific invariant, important path, or verification command | `server/AGENTS.md` |
+
+Rules:
+
+- Update only documents affected by the final diff; do not rewrite context mechanically.
+- Record the resulting architecture and constraints, not a chronological work log.
+- Remove or correct stale context instead of appending contradictory guidance.
+- Keep secrets, credentials, incident details, temporary debugging notes, and speculative plans out of durable context.
+- If no durable context changed, state that explicitly in the final report.
+- A significant change is not complete while its required context update is missing.
 
 For a large request that splits into independent lanes, specialists may investigate frontend, backend, realtime, and tests in parallel. Keep one owner for integration and final verification. Do not delegate small or tightly coupled work.
 

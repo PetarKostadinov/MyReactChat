@@ -47,3 +47,6 @@ The misspelled event string `message recieved` is currently part of the internal
 - Frontend API origin: `REACT_APP_API_URL` at build time
 - Frontend Socket.IO origin: `REACT_APP_SOCKET_URL`, falling back to `REACT_APP_API_URL`
 - Backend allowed browser origins: `CLIENT_URL` (comma-separated)
+- A push to `master` starts `.github/workflows/deploy.yml`, which verifies both applications and deploys the client to Firebase Hosting.
+- Render deploys the backend independently from the same Git push; the two deployments are not transactional.
+- GitHub Actions reads public client origins from repository variables and Firebase credentials from an encrypted repository secret.

@@ -6,6 +6,8 @@ This directory is a Create React App frontend using React 18, TypeScript, Chakra
 
 ## Important paths
 
+- `src/theme.ts`: shared Chakra design tokens and component defaults.
+- `src/config/api.ts`: shared authenticated-request configuration and API error normalization.
 - `src/Context/ChatProvider.tsx`: shared authenticated user, selected chat, chats, and notifications.
 - `src/types.ts`: shared frontend domain shapes.
 - `src/components/SingleChat.tsx`: messages, typing state, and Socket.IO lifecycle.
@@ -23,6 +25,10 @@ This directory is a Create React App frontend using React 18, TypeScript, Chakra
 - Local storage uses only the `userInfo` key; logout must not clear unrelated site storage.
 - Encode user-entered search query parameters.
 
+## Context maintenance
+
+After significant frontend work, update this file when important paths, frontend invariants, or verification commands changed. Update `docs/agent-context/architecture.md` when state ownership, authentication, REST, Socket.IO, routing, or deployment flow changed. Update `README.md` for user-visible behavior, setup, environment variables, or commands. Do not record implementation history here.
+
 ## Verification
 
 Run:
@@ -33,4 +39,3 @@ npm run build
 ```
 
 The production build may report dependency-age warnings; new source warnings should be fixed.
-
