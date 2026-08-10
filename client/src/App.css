@@ -1,6 +1,6 @@
 .App {
     position: fixed;
-    top: var(--app-top, 0px);
+    top: 0;
     right: 0;
     bottom: auto;
     left: 0;
