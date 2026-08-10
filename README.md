@@ -150,7 +150,7 @@ Configure these values once under **GitHub repository → Settings → Secrets a
 | --- | --- | --- |
 | Secret | `FIREBASE_SERVICE_ACCOUNT_MYCHAT_2CE41` | Firebase service-account JSON with Hosting deployment access |
 | Variable | `REACT_APP_API_URL` | Production backend origin, without `/api` |
-| Variable | `REACT_APP_SOCKET_URL` | Production Socket.IO origin |
+| Variable (optional) | `REACT_APP_SOCKET_URL` | Socket.IO origin when different from `REACT_APP_API_URL` |
 
 The recommended way to create the Firebase service account is Firebase's GitHub integration setup (`firebase init hosting:github`). Store the generated JSON under the secret name above. Never commit the JSON key.
 
