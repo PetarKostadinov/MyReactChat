@@ -17,7 +17,16 @@ function HomePage() {
     }, [navigate]);
 
     return (
-        <Container maxWidth='md' centerContent px={{ base: 4, md: 6 }} py={{ base: 8, md: 14 }}>
+        <Container
+            maxWidth='md'
+            centerContent
+            h='100%'
+            overflowY='auto'
+            overscrollBehavior='contain'
+            px={{ base: 4, md: 6 }}
+            pt={{ base: 5, md: 14 }}
+            pb={{ base: 'calc(1.25rem + env(safe-area-inset-bottom))', md: 14 }}
+        >
             <Box
                 display='flex'
                 justifyContent='center'

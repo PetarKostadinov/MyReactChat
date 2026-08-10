@@ -8,6 +8,7 @@ This directory is a Create React App frontend using React 18, TypeScript, Chakra
 
 - `src/theme.ts`: shared Chakra design tokens and component defaults.
 - `src/config/api.ts`: shared authenticated-request configuration and API error normalization.
+- `src/hooks/useVisualViewportHeight.ts`: keeps layouts within the visible mobile viewport when the software keyboard opens.
 - `src/Context/ChatProvider.tsx`: shared authenticated user, selected chat, chats, and notifications.
 - `src/types.ts`: shared frontend domain shapes.
 - `src/components/SingleChat.tsx`: messages, typing state, and Socket.IO lifecycle.

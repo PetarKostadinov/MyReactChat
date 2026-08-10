@@ -261,6 +261,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                                 aria-label="Message"
                                 value={newMessage}
                                 onChange={typingHandler}
+                                enterKeyHint="send"
                             />
                         </FormControl>
                     </Box>
