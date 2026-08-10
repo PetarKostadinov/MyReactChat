@@ -18,34 +18,37 @@ function HomePage() {
     }, [navigate]);
 
     return (
-        <Container maxWidth='xl' centerContent>
+        <Container maxWidth='md' centerContent px={{ base: 4, md: 6 }} py={{ base: 8, md: 14 }}>
             <Box
                 display='flex'
                 justifyContent='center'
-                p={3}
-                bg={'white'}
+                p={{ base: 4, md: 5 }}
+                bg='whiteAlpha.950'
                 w='100%'
-                m='40px 0 15px 0'
-                borderRadius='lg'
-                borderWidth='1px'
+                mb={4}
+                borderRadius='xl'
+                boxShadow='panel'
             >
                 <Text
-                    fontSize='4x1'
-                    fontFamily='Work sans'
-                    textAlign={'center'}
+                    as='h1'
+                    fontSize={{ base: '2xl', md: '3xl' }}
+                    fontWeight='bold'
+                    letterSpacing='tight'
+                    color='gray.800'
+                    textAlign='center'
                 >Talk-A-Tive</Text>
             </Box>
             <Box
-                bg='white'
+                bg='whiteAlpha.950'
                 w='100%'
-                p={4}
-                borderRadius='lg'
-                borderWidth='1px'
+                p={{ base: 3, md: 5 }}
+                borderRadius='xl'
+                boxShadow='panel'
             >
-                <Tabs variant='soft-rounded'>
+                <Tabs variant='soft-rounded' colorScheme='brand' isFitted>
                     <TabList>
-                        <Tab width={'50%'}>Login</Tab>
-                        <Tab width={'50%'}>Register</Tab>
+                        <Tab>Login</Tab>
+                        <Tab>Register</Tab>
                     </TabList>
                     <TabPanels>
                         <TabPanel>

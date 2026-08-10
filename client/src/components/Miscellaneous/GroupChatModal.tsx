@@ -122,12 +122,11 @@ function GroupChatModal({ children }) {
         <>
             <span onClick={onOpen}>{children}</span>
 
-            <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+            <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} size={{ base: 'full', sm: 'md' }} isCentered>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader
-                        fontSize={'35px'}
-                        fontFamily={'Work sans'}
+                        fontSize={{ base: '2xl', sm: '3xl' }}
                         display={'flex'}
                         justifyContent={'center'}
                     >Create Group Chat</ModalHeader>
@@ -168,8 +167,8 @@ function GroupChatModal({ children }) {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='blue' onClick={handleSubmit}>
-                            CreateChat
+                        <Button w={{ base: '100%', sm: 'auto' }} onClick={handleSubmit}>
+                            Create chat
                         </Button>
 
                     </ModalFooter>

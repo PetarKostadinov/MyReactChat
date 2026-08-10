@@ -196,7 +196,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
         <>
             <IconButton aria-label="Edit group chat" display={{ base: 'flex' }} icon={<ViewIcon />} onClick={onOpen}>Open Modal</IconButton>
 
-            <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <Modal isOpen={isOpen} onClose={onClose} isCentered size={{ base: 'full', sm: 'md' }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>{selectedChat.chatName}</ModalHeader>
@@ -212,7 +212,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
                                 <UserBadgeItem key={u._id} user={u} handleFunction={() => handleRemove(u)} />
                             ))}
                         </Box>
-                        <FormControl display={'flex'}>
+                        <FormControl display={'flex'} flexDir={{ base: 'column', sm: 'row' }}>
                             <Input
                                 placeholder='Chat Name'
                                 mb={3}
@@ -223,7 +223,8 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
                             <Button
                                 variant={'solid'}
                                 colorScheme='teal'
-                                ml={1}
+                                ml={{ base: 0, sm: 1 }}
+                                mb={3}
                                 isLoading={renameLoading}
                                 onClick={handleRename}
                             >
@@ -253,7 +254,7 @@ function UpdateGroupChatModal({ fetchAgain, setFetchAgain, fetchMessages }) {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme='red' onClick={() => handleRemove(user)}>
+                        <Button colorScheme='red' w={{ base: '100%', sm: 'auto' }} onClick={() => handleRemove(user)}>
                             Leave Group
                         </Button>
 

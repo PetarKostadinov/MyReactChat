@@ -18,7 +18,8 @@ function Login() {
         setShow(!show);
     }
 
-    const submitHandler = async () => {
+    const submitHandler = async (event?: React.FormEvent) => {
+        event?.preventDefault();
         setLoading(true);
         if (!email || !password) {
             toast({
@@ -37,7 +38,10 @@ function Login() {
                 headers: { 'Content-type': 'application/json' }
             };
 
-            const { data } = await axios.post('/api/user/login', { email, password }, config);
+            const { data } = await axios.post('/api/user/login', {
+                email: email.trim().toLowerCase(),
+                password,
+            }, config);
             toast({
                 title: 'Login Successful',
                 status: 'success',
@@ -49,9 +53,15 @@ function Login() {
             setLoading(false);
             navigate('/chats');
         } catch (error) {
+            const description = axios.isAxiosError(error)
+                ? error.response?.data?.message || (error.request
+                    ? 'Cannot reach the server. Check that the API is running and configured correctly.'
+                    : error.message)
+                : 'An unexpected error occurred. Please try again.';
+
             toast({
-                title: 'Error Occured!',
-                description: error.response.data.message,
+                title: 'Login failed',
+                description,
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
@@ -62,11 +72,13 @@ function Login() {
     }
 
     return (
-        <VStack spacing={'5px'}>
+        <VStack as='form' spacing={4} pt={2} onSubmit={submitHandler}>
             <FormControl id='email' isRequired>
                 <FormLabel>Email</FormLabel>
                 <Input
                     placeholder='Enter Your Email'
+                    type='email'
+                    autoComplete='email'
                     value={email || ''}
                     onChange={(e) => setEmail(e.target.value)}
                 />
@@ -76,6 +88,7 @@ function Login() {
                 <InputGroup>
                     <Input
                         type={show ? 'text' : 'password'}
+                        autoComplete='current-password'
                         placeholder='Enter Your Password'
                         value={password || ''}
                         onChange={(e) => setPassword(e.target.value)}
@@ -90,16 +103,15 @@ function Login() {
 
             <Button
                 width={'100%'}
-                style={{ marginTop: 15 }}
-                colorScheme='blue'
+                mt={2}
                 isLoading={loading}
-                onClick={submitHandler}>
+                type='submit'>
                 Login
             </Button>
             <Button
                 variant={'solid'}
                 width={'100%'}
-                colorScheme='red'
+                colorScheme='gray'
                 onClick={() => { setEmail('guest@example.com'); setPassword('123456'); }}
             >
                 Login with Guest Credentials

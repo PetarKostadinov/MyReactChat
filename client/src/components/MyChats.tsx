@@ -63,28 +63,31 @@ const MyChats = ({fetchAgain}) => {
             d={{base: selectedChat ? "none" : "flex", md: "flex"}}
             flexDir="column"
             alignItems="center"
-            p={3}
+            p={{base: 3, lg: 4}}
             bg="white"
             w={{base: "100%", md: "31%"}}
-            borderRadius="lg"
-            borderWidth="1px"
+            borderRadius={{ base: 0, sm: "xl" }}
+            boxShadow="panel"
+            minH={0}
         >
             <Box
                 pb={3}
-                px={3}
-                fontSize={{base: "28px", md: "30px"}}
-                fontFamily="Work sans"
+                px={{ base: 1, sm: 3 }}
+                fontSize={{base: "xl", lg: "2xl"}}
+                fontWeight="bold"
                 d="flex"
                 w="100%"
                 justifyContent="space-between"
                 alignItems="center"
+                gap={2}
             >
                 My Chats
                 <GroupChatModal>
                     <Button
                         d="flex"
-                        fontSize={{base: "17px", md: "10px", lg: "17px"}}
+                        fontSize={{base: "sm", md: "xs", lg: "sm"}}
                         rightIcon={<AddIcon />}
+                        whiteSpace="nowrap"
                     >
                         New Group Chat
                     </Button>
@@ -93,26 +96,34 @@ const MyChats = ({fetchAgain}) => {
             <Box
                 d="flex"
                 flexDir="column"
-                p={3}
-                bg="#F8F8F8"
+                p={{ base: 2, sm: 3 }}
+                bg="gray.50"
                 w="100%"
                 h="100%"
                 borderRadius="lg"
                 overflowY="hidden"
+                minH={0}
             >
                 {loading ? (
                     <ChatLoading />
                 ) : chats && chats.length > 0 ? (
-                    <Stack overflowY="scroll">
+                    <Stack overflowY="auto" spacing={2} pr={1}>
                         {chats.map((chat) => (
                             <Box
                                 onClick={() => setSelectedChat(chat)}
                                 cursor="pointer"
-                                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
+                                bg={selectedChat === chat ? "brand.600" : "white"}
                                 color={selectedChat === chat ? "white" : "black"}
                                 px={3}
                                 py={2}
                                 borderRadius="lg"
+                                borderWidth="1px"
+                                borderColor={selectedChat === chat ? "brand.600" : "gray.200"}
+                                transition="background-color .15s ease, border-color .15s ease, transform .15s ease"
+                                _hover={{ bg: selectedChat === chat ? "brand.700" : "gray.100", transform: "translateY(-1px)" }}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(event) => (event.key === "Enter" || event.key === " ") && setSelectedChat(chat)}
                                 key={chat._id}
                             >
                                 <Text>

@@ -1,6 +1,11 @@
 .messages {
     display: flex;
     flex-direction: column;
-    overflow-y: scroll;
-    scrollbar-width: none;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
 }
+
+.messages::-webkit-scrollbar { width: 6px; }
+.messages::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }

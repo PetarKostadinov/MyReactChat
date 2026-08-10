@@ -1,22 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@1,300&display=swap');
-
-
 .App {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
-    background-image: url('./top.avif');
+    background-color: #f8fafc;
+    background-image: linear-gradient(135deg, rgba(8, 145, 178, 0.82), rgba(15, 23, 42, 0.88)), url('./top.avif');
     background-size: cover;
     background-position: center;
-}
-::-webkit-scrollbar {
-    width: 0px;
-}
-
-::-webkit-scrollbar-thumb {
-    background: rgba(136, 136, 136, 0.281);
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
 }

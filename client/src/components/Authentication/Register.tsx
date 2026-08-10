@@ -126,7 +126,7 @@ function Register() {
     };
 
     return (
-        <VStack spacing={'5px'}>
+        <VStack spacing={4} pt={2}>
             <FormControl id='first-name' isRequired>
                 <FormLabel>Name</FormLabel>
                 <Input
@@ -141,8 +141,8 @@ function Register() {
                     onChange={(e) => setEmail(e.target.value)}
                 />
             </FormControl>
-            <FormControl id='password' isRequired>
-                <FormLabel>Password</FormLabel>
+            <FormControl id='repeat-password' isRequired>
+                <FormLabel>Confirm password</FormLabel>
                 <InputGroup>
                     <Input
                         type={show ? 'text' : 'password'}
@@ -185,8 +185,7 @@ function Register() {
             </FormControl>
             <Button
                 width={'100%'}
-                style={{ marginTop: 15 }}
-                colorScheme='blue'
+                mt={2}
                 onClick={submitHandler}
                 isLoading={loading}
             >

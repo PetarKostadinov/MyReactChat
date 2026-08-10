@@ -40,7 +40,12 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    if (typeof email !== 'string' || typeof password !== 'string' || !email.trim() || !password) {
+        res.status(400);
+        throw new Error('Email and password are required');
+    }
+
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
 
     if (user && (await user.matchPassword(password))) {
         res.json({

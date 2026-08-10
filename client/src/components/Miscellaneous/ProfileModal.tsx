@@ -17,14 +17,14 @@ function ProfileModal({ user, children }) {
                         display={{ base: 'flex' }}
                         icon={<ViewIcon />}
                         onClick={onOpen}
+                        aria-label={`View ${user.name}'s profile`}
                     />
                 )}
-            <Modal size={'lg'} isOpen={isOpen} onClose={onClose}>
+            <Modal size={{ base: 'full', sm: 'md', md: 'lg' }} isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader
-                        fontSize={'40px'}
-                        fontFamily={'Work sans'}
+                        fontSize={{ base: '2xl', md: '4xl' }}
                         display='flex'
                         justifyContent='center'
                     >{user.name}</ModalHeader>
@@ -37,17 +37,16 @@ function ProfileModal({ user, children }) {
                     >
                         <Image
                             borderRadius={'full'}
-                            boxSize={'150px'}
+                            boxSize={{ base: '120px', md: '150px' }}
                             src={user.pic}
                             alt={user.name}
                         />
-                        <Text>Email: {user.email}</Text>
+                        <Text mt={4} textAlign="center" overflowWrap="anywhere">Email: {user.email}</Text>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme='blue' mr={3} onClick={onClose}>
+                        <Button onClick={onClose}>
                             Close
                         </Button>
-                        <Button variant='ghost'>Secondary Action</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

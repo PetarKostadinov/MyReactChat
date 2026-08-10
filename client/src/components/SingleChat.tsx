@@ -177,14 +177,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             {selectedChat ? (
                 <>
                     <Text
-                        fontSize={{ base: "28px", md: "30px" }}
+                        fontSize={{ base: "xl", lg: "2xl" }}
+                        fontWeight="bold"
                         pb={3}
                         px={2}
                         w="100%"
-                        fontFamily="Work sans"
                         display="flex"
                         justifyContent={{ base: "space-between" }}
                         alignItems="center"
+                        gap={2}
+                        minH="44px"
                     >
                         <IconButton
                             display={{ base: "flex", md: "none" }}
@@ -215,12 +217,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         display="flex"
                         flexDir="column"
                         justifyContent="flex-end"
-                        p={3}
-                        bg="#E8E8E8"
+                        p={{ base: 2, sm: 3 }}
+                        bg="gray.50"
                         w="100%"
                         h="100%"
-                        borderRadius="lg"
+                        borderRadius={{ base: "md", sm: "lg" }}
                         overflowY="hidden"
+                        minH={0}
+                        borderWidth="1px"
+                        borderColor="gray.200"
                     >
                         {loading ? (
                             <Spinner
@@ -238,7 +243,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
                         <FormControl
                             onKeyDown={sendMessage}
-                            id="first-name"
+                            id="message"
                             isRequired
                             mt={3}
                         >
@@ -256,8 +261,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             )}
                             <Input
                                 variant="filled"
-                                bg="#E0E0E0"
-                                placeholder="Enter a message.."
+                                bg="white"
+                                borderWidth="1px"
+                                borderColor="gray.200"
+                                placeholder="Type a message and press Enter"
+                                aria-label="Message"
                                 value={newMessage}
                                 onChange={typingHandler}
                             />
@@ -267,8 +275,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
                     // to get socket.io on same page
                     <Box d="flex" alignItems="center" justifyContent="center" h="100%">
-                    <Text fontSize="3xl" pb={3} fontFamily="Work sans">
-                        Click on a user to start chatting
+                    <Text fontSize={{ base: "xl", md: "2xl" }} color="gray.500" textAlign="center" px={6}>
+                        Select a conversation to start chatting
                     </Text>
                 </Box>
             )}

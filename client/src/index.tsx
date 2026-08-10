@@ -7,6 +7,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter } from 'react-router-dom'
 import ChatProvider from './Context/ChatProvider';
 import axios from 'axios';
+import theme from './theme';
 
 const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, '');
 if (apiUrl) {
@@ -18,7 +19,7 @@ root.render(
 
   <BrowserRouter>
     <ChatProvider>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <App />
       </ChakraProvider>
     </ChatProvider>

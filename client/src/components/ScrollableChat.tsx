@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { Avatar } from "@chakra-ui/avatar";
+import { Box } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
 import ScrollableFeed from "react-scrollable-feed";
 import {
@@ -17,7 +18,7 @@ const ScrollableChat = ({ messages }) => {
         <ScrollableFeed>
             {messages &&
                 messages.map((m, i) => (
-                    <div style={{ display: "flex" }} key={m._id}>
+                    <Box display="flex" key={m._id}>
                         {(isSameSender(messages, m, i, user._id) ||
                             isLastMessage(messages, i, user._id)) && (
                                 <Tooltip label={m.sender.name} placement="bottom-start" hasArrow>
@@ -31,20 +32,22 @@ const ScrollableChat = ({ messages }) => {
                                     />
                                 </Tooltip>
                             )}
-                        <span
-                            style={{
-                                backgroundColor: `${m.sender._id === user._id ? "#BEE3F8" : "#B9F5D0"
-                                    }`,
-                                marginLeft: isSameSenderMargin(messages, m, i, user._id),
-                                marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
-                                borderRadius: "20px",
-                                padding: "5px 15px",
-                                maxWidth: "75%",
-                            }}
+                        <Box
+                            as="span"
+                            bg={m.sender._id === user._id ? "brand.100" : "green.100"}
+                            color="gray.800"
+                            ml={isSameSenderMargin(messages, m, i, user._id)}
+                            mt={isSameUser(messages, m, i, user._id) ? "3px" : "10px"}
+                            borderRadius="xl"
+                            px={4}
+                            py={2}
+                            maxW={{ base: "82%", md: "75%" }}
+                            overflowWrap="anywhere"
+                            lineHeight="short"
                         >
                             {m.content}
-                        </span>
-                    </div>
+                        </Box>
+                    </Box>
                 ))}
         </ScrollableFeed>
     );

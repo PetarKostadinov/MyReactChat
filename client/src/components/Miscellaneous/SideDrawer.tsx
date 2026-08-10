@@ -113,8 +113,11 @@ function SideDrawer() {
                 justifyContent="space-between"
                 alignItems="center"
                 bg="white"
-                p={3}
-                borderWidth={5}
+                px={{ base: 3, md: 5 }}
+                h="72px"
+                borderBottomWidth="1px"
+                borderColor="gray.200"
+                boxShadow="sm"
             >
                 <Tooltip
                     label='Search User to chat'
@@ -124,6 +127,8 @@ function SideDrawer() {
                     <Button
                         variant='ghost'
                         onClick={onOpen}
+                        aria-label='Search users'
+                        px={{ base: 3, md: 4 }}
                     >
                         <i className='fas fa-search'></i>
                         <Text display={{ base: 'none', md: 'flex' }} px='4'>
@@ -132,12 +137,12 @@ function SideDrawer() {
                     </Button>
                 </Tooltip>
 
-                <Text fontSize='2xl' fontFamily='Work sans'>
+                <Text display={{ base: 'none', sm: 'block' }} fontSize={{ sm: 'lg', md: '2xl' }} fontWeight='bold' letterSpacing='tight'>
                     Talk-A-Tive
                 </Text>
-                <div>
+                <Box display="flex" alignItems="center" gap={1}>
                     <Menu>
-                        <MenuButton p={1}>
+                        <MenuButton p={1} aria-label="Notifications">
                             <NotificationBadge count={notification.length} effect={Effect.SCALE} />
                             <BellIcon fontSize={'2xl'} margin={1} />
                         </MenuButton>
@@ -156,7 +161,7 @@ function SideDrawer() {
                         </MenuList>
                     </Menu>
                     <Menu>
-                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
+                        <MenuButton as={Button} rightIcon={<ChevronDownIcon />} px={{ base: 2, sm: 4 }}>
                             <Avatar size='sm' cursor='pointer' name={user.name} src={user.pic} />
                         </MenuButton>
                         <MenuList>
@@ -166,10 +171,10 @@ function SideDrawer() {
                             <MenuItem onClick={() => logoutHandler()}>Logout</MenuItem>
                         </MenuList>
                     </Menu>
-                </div>
+                </Box>
             </Box >
 
-            <Drawer placement='left' onClose={onClose} isOpen={isOpen}>
+            <Drawer placement='left' onClose={onClose} isOpen={isOpen} size={{ base: 'full', sm: 'xs' }}>
                 <DrawerOverlay />
                 <DrawerContent>
                     <DrawerHeader borderBottomWidth={'1px'}>Search Users</DrawerHeader>
