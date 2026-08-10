@@ -180,6 +180,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                         alignItems="center"
                         gap={2}
                         minH="44px"
+                        flexShrink={0}
                     >
                         <IconButton
                             display={{ base: "flex", md: "none" }}
@@ -213,7 +214,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                         p={{ base: 2, sm: 3 }}
                         bg="gray.50"
                         w="100%"
-                        h="100%"
+                        flex="1"
                         borderRadius={{ base: "md", sm: "lg" }}
                         overflowY="hidden"
                         minH={0}
@@ -239,6 +240,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                             id="message"
                             isRequired
                             mt={3}
+                            flexShrink={0}
                         >
                             {istyping ? (
                                 <div>

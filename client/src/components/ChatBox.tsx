@@ -17,6 +17,7 @@ function ChatBox({ fetchAgain, setFetchAgain }: RefreshChatsProps) {
             borderRadius={{ base: 0, sm: "xl" }}
             boxShadow="panel"
             minH={0}
+            overflow="hidden"
         >
             <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
         </Box>

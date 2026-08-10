@@ -100,6 +100,7 @@ function SideDrawer() {
                 bg="white"
                 px={{ base: 3, md: 5 }}
                 h="72px"
+                flexShrink={0}
                 borderBottomWidth="1px"
                 borderColor="gray.200"
                 boxShadow="sm"
