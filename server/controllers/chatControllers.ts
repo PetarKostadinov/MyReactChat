@@ -66,8 +66,11 @@ const fetchChats = asyncHandler(async (req, res) => {
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
-    if (!req.body.users || !req.body.name) {
-        return res.status(400).send({ message: 'All fields are required!' });
+    if (typeof req.body.name !== 'string' || !req.body.name.trim()) {
+        return res.status(400).send({ message: 'Group name is required' });
+    }
+    if (!req.body.users) {
+        return res.status(400).send({ message: 'Group members are required' });
     }
 
     let users;

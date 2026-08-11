@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, useDisclosure, useToast } from '@chakra-ui/react'
+import { Box, Button, FormControl, FormHelperText, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
 import axios from 'axios';
@@ -10,9 +10,11 @@ import { authConfig, getApiErrorMessage } from '../../config/api';
 function GroupChatModal({ children }: React.PropsWithChildren) {
 
     const [groupChatName, setGroupChatName] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const [searchResult, setSearchResult] = useState<User[]>([]);
-    const [loading, setLoading] = useState(false);
+    const [searchLoading, setSearchLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const toast = useToast();
 
@@ -20,17 +22,26 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const closeModal = () => {
+        setGroupChatName('');
+        setSearchQuery('');
+        setSelectedUsers([]);
+        setSearchResult([]);
+        onClose();
+    };
+
     const handleSearch = async (query: string) => {
-        if (!query) {
+        setSearchQuery(query);
+        if (!query.trim()) {
+            setSearchResult([]);
             return;
         }
 
         try {
-            setLoading(true);
+            setSearchLoading(true);
 
             const { data } = await axios.get(`/api/user?search=${encodeURIComponent(query)}`, authConfig(user.token));
 
-            setLoading(false);
             setSearchResult(data);
 
 
@@ -43,12 +54,25 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
                 isClosable: true,
                 position: 'bottom-left'
             });
+        } finally {
+            setSearchLoading(false);
         }
     };
     const handleSubmit = async () => {
-        if (!groupChatName || selectedUsers.length < 2) {
+        if (!groupChatName.trim()) {
             toast({
-                title: 'All fields are required',
+                title: 'Enter a group name',
+                status: 'warning',
+                duration: 5000,
+                isClosable: true,
+                position: 'top'
+            });
+            return;
+        }
+        if (selectedUsers.length < 2) {
+            toast({
+                title: 'Select at least two users',
+                description: 'A group chat requires you and at least two other members.',
                 status: 'warning',
                 duration: 5000,
                 isClosable: true,
@@ -58,18 +82,17 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
         }
 
         try {
-            setLoading(true);
+            setSubmitting(true);
             const { data } = await axios.post('/api/chat/group',
                 {
-                    name: groupChatName,
+                    name: groupChatName.trim(),
                     users: JSON.stringify(selectedUsers.map((u) => u._id))
                 },
                 authConfig(user.token)
             );
 
-            setLoading(false);
             setChats([data, ...(chats || [])]);
-            onClose();
+            closeModal();
             toast({
                 title: 'New Group Chat Created',
                 status: 'success',
@@ -80,21 +103,22 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
 
         } catch (error) {
             toast({
-                title: 'Failed to create chat!',
+                title: 'Could not create group chat',
+                description: getApiErrorMessage(error, 'Please try again.'),
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
                 position: 'bottom'
             });
         } finally {
-            setLoading(false);
+            setSubmitting(false);
         }
     };
     const handleDelete = (delUser: User) => {
-        setSelectedUsers(selectedUsers.filter((x) => x._id !== delUser._id));
+        setSelectedUsers((currentUsers) => currentUsers.filter((user) => user._id !== delUser._id));
     };
     const handleGroup = (userToAdd: User) => {
-        if (selectedUsers.includes(userToAdd)) {
+        if (selectedUsers.some((user) => user._id === userToAdd._id)) {
             toast({
                 title: 'User already added',
                 status: 'warning',
@@ -104,14 +128,14 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
             });
             return;
         }
-        setSelectedUsers([...selectedUsers, userToAdd]);
+        setSelectedUsers((currentUsers) => [...currentUsers, userToAdd]);
     };
 
     return (
         <>
             <span onClick={onOpen}>{children}</span>
 
-            <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose} size={{ base: 'full', sm: 'md' }} isCentered>
+            <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={closeModal} size={{ base: 'full', sm: 'md' }} isCentered>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader
@@ -122,18 +146,22 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
                     <ModalCloseButton />
                     <ModalBody display={'flex'} flexDir={'column'} alignItems='center' >
                         <FormControl>
+                            <FormLabel>Group name</FormLabel>
                             <Input
-                                placeholder='Chat Name'
+                                placeholder='Enter a group name'
                                 mb={3}
+                                value={groupChatName}
                                 onChange={(e) => setGroupChatName(e.target.value)}
                             ></Input>
                         </FormControl>
                         <FormControl>
+                            <FormLabel>Add members</FormLabel>
                             <Input
-                                placeholder='Add Users, eg: Petar, John, Mary'
-                                mb={3}
+                                placeholder='Search by name or email'
+                                value={searchQuery}
                                 onChange={(e) => handleSearch(e.target.value)}
                             ></Input>
+                            <FormHelperText mb={3}>Select at least two people from the results below.</FormHelperText>
                         </FormControl>
                         <Box
                             w={'100%'}
@@ -143,8 +171,13 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
                             {selectedUsers.map((u) => (
                                 <UserBadgeItem key={u._id} user={u} handleFunction={() => handleDelete(u)} />
                             ))}
+                            {selectedUsers.length > 0 && (
+                                <Text w='100%' fontSize='sm' color='gray.600' mb={2}>
+                                    {selectedUsers.length} {selectedUsers.length === 1 ? 'member' : 'members'} selected (minimum 2)
+                                </Text>
+                            )}
                         </Box>
-                            {loading ? <div>loading</div>
+                            {searchLoading ? <Spinner />
                                 :
                                 (searchResult?.slice(0, 4)
                                     .map(user => (<UserListItem
@@ -156,7 +189,7 @@ function GroupChatModal({ children }: React.PropsWithChildren) {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button w={{ base: '100%', sm: 'auto' }} onClick={handleSubmit}>
+                        <Button w={{ base: '100%', sm: 'auto' }} isLoading={submitting} onClick={handleSubmit}>
                             Create chat
                         </Button>
 
