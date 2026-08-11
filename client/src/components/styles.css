@@ -6,7 +6,13 @@
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: #94a3b8 transparent;
+    padding: 12px clamp(12px, 3vw, 32px);
+    background-color: #f8fafc;
+    background-image: radial-gradient(circle at 1px 1px, rgba(148, 163, 184, 0.12) 1px, transparent 0);
+    background-size: 24px 24px;
 }
+
+.message-feed { min-height: 100%; }
 
 .messages::-webkit-scrollbar { width: 6px; }
 .messages::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 999px; }

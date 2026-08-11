@@ -13,6 +13,7 @@ export interface Chat {
   users: User[];
   groupAdmin?: User;
   latestMessage?: Message;
+  updatedAt?: string;
 }
 
 export interface Message {
@@ -20,6 +21,8 @@ export interface Message {
   sender: User;
   content: string;
   chat: Chat;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface RefreshChatsProps {

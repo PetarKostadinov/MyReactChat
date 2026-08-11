@@ -1,13 +1,12 @@
 import { FormControl } from "@chakra-ui/form-control";
-import { Input } from "@chakra-ui/input";
 import { Box, Text } from "@chakra-ui/layout";
 import "./styles.css";
-import { IconButton, Spinner, useToast } from "@chakra-ui/react";
+import { Avatar, IconButton, Spinner, Textarea, useToast } from "@chakra-ui/react";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
-import { ArrowBackIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import ProfileModal from "./Miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
@@ -76,15 +75,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
         }
     };
 
-    const sendMessage = async (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Enter" && newMessage) {
+    const sendMessage = async () => {
+        const content = newMessage.trim();
+        if (content && selectedChat) {
             socket?.emit("stop typing", selectedChat._id);
             try {
                 setNewMessage("");
                 const { data } = await axios.post(
                     "/api/message",
                     {
-                        content: newMessage,
+                        content,
                         chatId: selectedChat._id,
                     },
                     authConfig(user.token)
@@ -101,6 +101,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                     position: "bottom",
                 });
             }
+        }
+    };
+
+    const handleComposerKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
         }
     };
 
@@ -153,18 +160,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
         };
     }, [setFetchAgain, setNotification]);
 
-    const typingHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    const typingHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
         setNewMessage(e.target.value);
 
         if (!socketConnected) return;
 
         if (!typing) {
             setTyping(true);
-            socket?.emit("typing", selectedChat._id);
+            socket?.emit("typing", selectedChat?._id);
         }
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
         typingTimeout.current = setTimeout(() => {
-            socket?.emit("stop typing", selectedChat._id);
+            socket?.emit("stop typing", selectedChat?._id);
             setTyping(false);
         }, 3000);
     };
@@ -173,57 +180,51 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
         <>
             {selectedChat ? (
                 <>
-                    <Text
-                        fontSize={{ base: "xl", lg: "2xl" }}
-                        fontWeight="bold"
-                        pb={3}
-                        px={2}
+                    <Box
+                        px={{ base: 3, md: 5 }}
+                        py={3}
                         w="100%"
                         display="flex"
-                        justifyContent={{ base: "space-between" }}
+                        justifyContent="space-between"
                         alignItems="center"
                         gap={2}
-                        minH="44px"
+                        minH="68px"
                         flexShrink={0}
+                        borderBottomWidth="1px"
+                        borderColor="gray.200"
                     >
-                        <IconButton
-                            display={{ base: "flex", md: "none" }}
-                            icon={<ArrowBackIcon />}
-                            aria-label="Back to chats"
-                            onClick={() => setSelectedChat(undefined)}
-                        />
-                        {messages &&
-                            (!selectedChat.isGroupChat ? (
-                                <>
-                                    {getSender(user, selectedChat.users)}
-                                    <ProfileModal
-                                        user={getSenderFull(user, selectedChat.users)}
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    {selectedChat.chatName.toUpperCase()}
-                                    <UpdateGroupChatModal
-                                        fetchMessages={fetchMessages}
-                                        fetchAgain={fetchAgain}
-                                        setFetchAgain={setFetchAgain}
-                                    />
-                                </>
-                            ))}
-                    </Text>
+                        <Box display="flex" alignItems="center" gap={3} minW={0}>
+                            <IconButton display={{ base: "flex", md: "none" }} icon={<ArrowBackIcon />} aria-label="Back to conversations" variant="ghost" onClick={() => setSelectedChat(undefined)} />
+                            <Avatar
+                                size="sm"
+                                name={selectedChat.isGroupChat ? selectedChat.chatName : getSender(user, selectedChat.users)}
+                                src={selectedChat.isGroupChat ? undefined : getSenderFull(user, selectedChat.users)?.pic}
+                                bg="brand.100"
+                                color="brand.700"
+                            />
+                            <Box minW={0}>
+                                <Text fontSize={{ base: "md", md: "lg" }} fontWeight="bold" noOfLines={1}>
+                                    {selectedChat.isGroupChat ? selectedChat.chatName : getSender(user, selectedChat.users)}
+                                </Text>
+                                <Text fontSize="xs" color={socketConnected ? "green.600" : "gray.500"}>
+                                    {socketConnected ? "Connected" : "Connecting…"}
+                                </Text>
+                            </Box>
+                        </Box>
+                        {!selectedChat.isGroupChat ? (
+                            <ProfileModal user={getSenderFull(user, selectedChat.users)} />
+                        ) : (
+                            <UpdateGroupChatModal fetchMessages={fetchMessages} fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
+                        )}
+                    </Box>
                     <Box
                         display="flex"
                         flexDir="column"
-                        justifyContent="flex-end"
-                        p={{ base: 2, sm: 3 }}
-                        bg="gray.50"
+                        bg="white"
                         w="100%"
                         flex="1"
-                        borderRadius={{ base: "md", sm: "lg" }}
                         overflowY="hidden"
                         minH={0}
-                        borderWidth="1px"
-                        borderColor="gray.200"
                     >
                         {loading ? (
                             <Spinner
@@ -234,7 +235,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                                 margin="auto"
                             />
                         ) : (
-                                <div className="messages">
+                                <div className="messages" aria-live="polite">
                                     <ScrollableChat messages={messages} />
                                 </div>
                         )}
@@ -242,36 +243,52 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                         <FormControl
                             ref={composerRef}
                             data-keyboard-avoid
-                            onKeyDown={sendMessage}
                             id="message"
-                            isRequired
-                            mt={3}
+                            px={{ base: 3, md: 5 }}
+                            py={3}
                             flexShrink={0}
                             zIndex={1}
+                            borderTopWidth="1px"
+                            borderColor="gray.200"
+                            bg="white"
                         >
                             {istyping ? (
-                                <div>
+                                <Box display="flex" alignItems="center" h="24px" color="gray.500" fontSize="xs">
                                     <Lottie
                                         options={defaultOptions}
-                                        // height={50}
-                                        width={70}
-                                        style={{ marginBottom: 15, marginLeft: 0 }}
+                                        width={42}
+                                        style={{ margin: 0 }}
                                     />
-                                </div>
+                                    <Text ml={1}>Typing…</Text>
+                                </Box>
                             ) : (
-                                <></>
+                                <Box h="24px" />
                             )}
-                            <Input
-                                variant="filled"
-                                bg="white"
-                                borderWidth="1px"
-                                borderColor="gray.200"
-                                placeholder="Type a message and press Enter"
-                                aria-label="Message"
-                                value={newMessage}
-                                onChange={typingHandler}
-                                enterKeyHint="send"
-                            />
+                            <Box display="flex" alignItems="flex-end" gap={2} bg="gray.50" borderWidth="1px" borderColor="gray.200" borderRadius="2xl" p={1.5} _focusWithin={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}>
+                                <Textarea
+                                    variant="unstyled"
+                                    placeholder="Write a message…"
+                                    aria-label="Message"
+                                    value={newMessage}
+                                    onChange={typingHandler}
+                                    onKeyDown={handleComposerKeyDown}
+                                    enterKeyHint="send"
+                                    resize="none"
+                                    rows={1}
+                                    minH="40px"
+                                    maxH="120px"
+                                    px={3}
+                                    py={2}
+                                />
+                                <IconButton
+                                    icon={<ArrowForwardIcon />}
+                                    aria-label="Send message"
+                                    borderRadius="full"
+                                    flexShrink={0}
+                                    isDisabled={!newMessage.trim()}
+                                    onClick={sendMessage}
+                                />
+                            </Box>
                         </FormControl>
                     </Box>
                 </>

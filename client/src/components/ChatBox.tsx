@@ -11,11 +11,11 @@ function ChatBox({ fetchAgain, setFetchAgain }: RefreshChatsProps) {
             display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
             alignItems="center"
             flexDir="column"
-            p={{ base: 2, sm: 3, lg: 4 }}
             bg="white"
-            w={{ base: "100%", md: "68%" }}
-            borderRadius={{ base: 0, sm: "xl" }}
-            boxShadow="panel"
+            flex="1"
+            w={{ base: "100%", md: "auto" }}
+            borderLeftWidth={{ base: 0, md: "1px" }}
+            borderColor="gray.200"
             minH={0}
             overflow="hidden"
         >

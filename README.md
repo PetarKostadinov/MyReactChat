@@ -11,7 +11,7 @@ MyReactChat is a responsive, real-time chat application built with React, Expres
 - Real-time message delivery and typing indicators with Socket.IO
 - Notifications for messages outside the selected chat
 - Optional profile-picture upload through Cloudinary
-- Responsive Chakra UI interface
+- Responsive, full-height chat workspace with conversation previews, grouped message bubbles, date separators, timestamps, and a mobile-safe composer
 
 ## Architecture
 
