@@ -241,6 +241,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
 
                         <FormControl
                             ref={composerRef}
+                            data-keyboard-avoid
                             onKeyDown={sendMessage}
                             id="message"
                             isRequired
