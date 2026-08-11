@@ -9,6 +9,10 @@ const isKeyboardAvoidanceTargetFocused = (): boolean =>
   document.activeElement instanceof HTMLElement &&
   Boolean(document.activeElement.closest('[data-keyboard-avoid]'));
 
+const needsInAppBrowserFallback = (): boolean =>
+  window.matchMedia('(hover: none) and (pointer: coarse)').matches &&
+  window.innerWidth <= 1024;
+
 export const useVisualViewportHeight = (): void => {
   useEffect(() => {
     const animationTimers = new Set<number>();
@@ -25,7 +29,7 @@ export const useVisualViewportHeight = (): void => {
         : viewportInset > 100 ? viewportInset : 0;
       const keyboardInset = measuredKeyboardInset > 0
         ? measuredKeyboardInset
-        : isKeyboardAvoidanceTargetFocused()
+        : needsInAppBrowserFallback() && isKeyboardAvoidanceTargetFocused()
           ? Math.min(layoutHeight * KEYBOARD_FALLBACK_RATIO, KEYBOARD_FALLBACK_MAX)
           : 0;
 
