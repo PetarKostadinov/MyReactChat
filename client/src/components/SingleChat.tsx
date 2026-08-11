@@ -18,6 +18,7 @@ import UpdateGroupChatModal from "./Miscellaneous/UpdateGroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
 import type { Chat, Message, RefreshChatsProps } from '../types';
 import { authConfig } from '../config/api';
+import { useKeyboardAvoidance } from '../hooks/useKeyboardAvoidance';
 const ENDPOINT =
     process.env.REACT_APP_SOCKET_URL?.replace(/\/$/, "") ||
     process.env.REACT_APP_API_URL?.replace(/\/$/, "") ||
@@ -33,7 +34,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
     const [typing, setTyping] = useState(false);
     const [istyping, setIsTyping] = useState(false);
     const typingTimeout = useRef<ReturnType<typeof setTimeout>>();
+    const composerRef = useRef<HTMLDivElement>(null);
     const toast = useToast();
+
+    useKeyboardAvoidance(composerRef);
 
     const defaultOptions = {
         loop: true,
@@ -236,11 +240,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                         )}
 
                         <FormControl
+                            ref={composerRef}
                             onKeyDown={sendMessage}
                             id="message"
                             isRequired
                             mt={3}
                             flexShrink={0}
+                            zIndex={1}
                         >
                             {istyping ? (
                                 <div>
