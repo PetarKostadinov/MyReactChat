@@ -6,8 +6,11 @@ This directory is an Express, Mongoose, JWT, and Socket.IO backend compiled from
 
 ## Important paths
 
+- `server/app.ts`: side-effect-free Express application construction for runtime and HTTP tests.
 - `server/server.ts`: Express startup and authenticated Socket.IO wiring.
 - `server/controllers/userController.ts`: registration, login, and authenticated user search.
+- `server/domain/chatPermissions.ts`: shared identity and chat/group authorization predicates used by controllers and tests.
+- `server/tests/server.test.ts`: HTTP boundary and authorization regression tests.
 - `server/middleware/authMiddleware.ts`: HTTP bearer-token authentication.
 - `server/controllers/chatControllers.ts`: one-to-one and group chat operations.
 - `server/controllers/messageControllers.ts`: message history and sending.
@@ -48,6 +51,7 @@ Do not read or print secret values during routine work.
 From the repository root, run:
 
 ```powershell
+npm test
 npm run typecheck
 npm run build
 ```

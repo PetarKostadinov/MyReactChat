@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Message = require('../models/messageModel');
 const User = require('../models/userModel');
 const Chat = require('../models/chatModel');
+const { isChatMember } = require('../domain/chatPermissions');
 
 
 const sendMessage = asyncHandler(async (req, res) => {
@@ -22,7 +23,7 @@ const sendMessage = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Chat not found');
     }
-    if (!chat.users.some((userId) => userId.equals(req.user._id))) {
+    if (!isChatMember(chat.users, req.user)) {
         res.status(403);
         throw new Error('Not authorized to send messages to this chat');
     }
@@ -47,7 +48,7 @@ const allMessages = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Chat not found');
     }
-    if (!chat.users.some((userId) => userId.equals(req.user._id))) {
+    if (!isChatMember(chat.users, req.user)) {
         res.status(403);
         throw new Error('Not authorized to view messages in this chat');
     }

@@ -123,6 +123,7 @@ From the repository root:
 
 ```powershell
 npm run typecheck
+npm test
 npm run build
 npm run dev
 npm start
@@ -132,9 +133,12 @@ From `client/`:
 
 ```powershell
 npx tsc --noEmit
+npm test -- --watchAll=false
 npm run build
 npm start
 ```
+
+The backend test suite covers HTTP boundaries and reusable chat-authorization rules. The frontend suite covers user-facing authentication behavior. The deployment workflow runs both suites before building or deploying.
 
 The backend build output is `dist/server/`. The frontend build output is `client/build/`. Both directories are generated and ignored by Git.
 
@@ -218,9 +222,12 @@ MyReactChat/
 ├── server/
 │   ├── config/
 │   ├── controllers/
+│   ├── domain/
 │   ├── middleware/
 │   ├── models/
 │   ├── routes/
+│   ├── tests/
+│   ├── app.ts
 │   └── server.ts
 ├── docs/agent-context/
 ├── AGENTS.md

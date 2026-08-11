@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const mongoose = require("mongoose");
 const Chat = require("../models/chatModel");
 const User = require("../models/userModel");
+const { canRemoveGroupMember, isGroupAdmin, isSameUser } = require('../domain/chatPermissions');
 
 //@description     Create or fetch One to One Chat
 //@route           POST /api/chat/
@@ -15,7 +16,7 @@ const accessChat = asyncHandler(async (req, res) => {
     if (!mongoose.isValidObjectId(userId)) {
         return res.status(400).send({ message: "Invalid user ID" });
     }
-    if (String(userId) === String(req.user._id)) {
+    if (isSameUser(userId, req.user)) {
         return res.status(400).send({ message: "You cannot create a chat with yourself" });
     }
     if (!await User.exists({ _id: userId })) {
@@ -111,7 +112,7 @@ const renameGroupChat = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Chat Not Found');
     }
-    if (String(chat.groupAdmin) !== String(req.user._id)) {
+    if (!isGroupAdmin(chat.groupAdmin, req.user)) {
         res.status(403);
         throw new Error('Only the group admin can rename this chat');
     }
@@ -139,7 +140,7 @@ const addToGroup = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Chat Not Found!');
     }
-    if (String(chat.groupAdmin) !== String(req.user._id)) {
+    if (!isGroupAdmin(chat.groupAdmin, req.user)) {
         res.status(403);
         throw new Error('Only the group admin can add users');
     }
@@ -172,9 +173,7 @@ const removeFromGroupChat = asyncHandler(async (req, res) => {
         res.status(404);
         throw new Error('Chat Not Found!');
     }
-    const isAdmin = String(chat.groupAdmin) === String(req.user._id);
-    const isLeaving = String(userId) === String(req.user._id);
-    if (!isAdmin && !isLeaving) {
+    if (!canRemoveGroupMember(chat.groupAdmin, req.user, userId)) {
         res.status(403);
         throw new Error('Only the group admin can remove other users');
     }

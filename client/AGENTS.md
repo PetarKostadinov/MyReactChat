@@ -36,6 +36,7 @@ After significant frontend work, update this file when important paths, frontend
 Run:
 
 ```powershell
+npm test -- --watchAll=false
 npx tsc --noEmit
 npm run build
 ```

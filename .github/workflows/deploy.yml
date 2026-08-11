@@ -36,6 +36,7 @@ jobs:
       - name: Verify server
         run: |
           npm run typecheck
+          npm test
           npm run build
 
       - name: Install client dependencies
@@ -58,6 +59,7 @@ jobs:
           REACT_APP_SOCKET_URL: ${{ vars.REACT_APP_SOCKET_URL }}
         run: |
           npx tsc --noEmit
+          npm test -- --watchAll=false
           npm run build
 
       - name: Deploy client to Firebase Hosting

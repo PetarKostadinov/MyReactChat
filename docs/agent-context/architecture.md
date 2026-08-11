@@ -15,6 +15,8 @@ Express + Socket.IO server
   └─ Mongoose → MongoDB (User, Chat, Message)
 ```
 
+`server/app.ts` constructs the Express application without connecting to MongoDB or opening a port. `server/server.ts` owns database connection, HTTP listening, and Socket.IO startup. This separation keeps HTTP boundaries testable without runtime side effects.
+
 ## Authentication flow
 
 Registration or login returns a user payload containing a JWT. The client stores it under `localStorage.userInfo`. Axios sends it as `Authorization: Bearer <token>`. Socket.IO sends the same token in the handshake `auth.token`.
