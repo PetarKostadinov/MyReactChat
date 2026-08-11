@@ -9,6 +9,7 @@ export const useKeyboardAvoidance = (containerRef: RefObject<HTMLElement>): void
 
     let currentLift = 0;
     let animationFrame: number | undefined;
+    const focusTimers: number[] = [];
 
     const reset = () => {
       currentLift = 0;
@@ -35,23 +36,39 @@ export const useKeyboardAvoidance = (containerRef: RefObject<HTMLElement>): void
       });
     };
 
+    const keepFocusedControlVisible = () => {
+      updatePosition();
+      [100, 300, 600].forEach((delay) => {
+        focusTimers.push(window.setTimeout(() => {
+          updatePosition();
+          const activeElement = document.activeElement;
+          if (activeElement instanceof HTMLElement && container.contains(activeElement)) {
+            activeElement.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+          }
+        }, delay));
+      });
+    };
+
     const handleFocusOut = () => requestAnimationFrame(() => {
       if (!container.contains(document.activeElement)) reset();
     });
 
-    container.addEventListener('focusin', updatePosition);
+    container.addEventListener('focusin', keepFocusedControlVisible);
     container.addEventListener('focusout', handleFocusOut);
     window.addEventListener('resize', updatePosition);
     window.visualViewport?.addEventListener('resize', updatePosition);
     window.visualViewport?.addEventListener('scroll', updatePosition);
+    navigator.virtualKeyboard?.addEventListener('geometrychange', updatePosition);
 
     return () => {
       if (animationFrame !== undefined) cancelAnimationFrame(animationFrame);
-      container.removeEventListener('focusin', updatePosition);
+      focusTimers.forEach(window.clearTimeout);
+      container.removeEventListener('focusin', keepFocusedControlVisible);
       container.removeEventListener('focusout', handleFocusOut);
       window.removeEventListener('resize', updatePosition);
       window.visualViewport?.removeEventListener('resize', updatePosition);
       window.visualViewport?.removeEventListener('scroll', updatePosition);
+      navigator.virtualKeyboard?.removeEventListener('geometrychange', updatePosition);
       reset();
     };
   }, [containerRef]);
