@@ -34,6 +34,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
     const [istyping, setIsTyping] = useState(false);
     const typingTimeout = useRef<ReturnType<typeof setTimeout>>();
     const composerRef = useRef<HTMLDivElement>(null);
+    const messageInputRef = useRef<HTMLTextAreaElement>(null);
     const toast = useToast();
 
     useKeyboardAvoidance(composerRef);
@@ -78,6 +79,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
     const sendMessage = async () => {
         const content = newMessage.trim();
         if (content && selectedChat) {
+            messageInputRef.current?.focus({ preventScroll: true });
             socket?.emit("stop typing", selectedChat._id);
             try {
                 setNewMessage("");
@@ -266,6 +268,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                             )}
                             <Box display="flex" alignItems="flex-end" gap={2} bg="gray.50" borderWidth="1px" borderColor="gray.200" borderRadius="2xl" p={1.5} _focusWithin={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}>
                                 <Textarea
+                                    ref={messageInputRef}
                                     variant="unstyled"
                                     placeholder="Write a message…"
                                     aria-label="Message"
@@ -286,6 +289,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                                     borderRadius="full"
                                     flexShrink={0}
                                     isDisabled={!newMessage.trim()}
+                                    onPointerDown={(event) => event.preventDefault()}
                                     onClick={sendMessage}
                                 />
                             </Box>
