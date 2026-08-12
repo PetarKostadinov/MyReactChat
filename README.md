@@ -8,6 +8,7 @@ MyReactChat is a responsive, real-time chat application built with React, Expres
 - User search and one-to-one conversations
 - Group creation, renaming, membership management, and leaving
 - Persistent messages stored in MongoDB
+- Image messages uploaded from the chat composer and hosted through Cloudinary
 - Real-time message delivery and typing indicators with Socket.IO
 - Notifications for messages outside the selected chat
 - Optional profile-picture upload through Cloudinary
@@ -58,7 +59,7 @@ HTTP requests and Socket.IO handshakes use the same JWT identity. The server ver
 - Node.js 18 or later
 - npm
 - A MongoDB deployment
-- A Cloudinary upload preset if profile uploads are needed
+- A Cloudinary upload preset if profile or chat image uploads are needed
 
 ### 1. Install server dependencies
 

@@ -23,12 +23,14 @@ Registration or login returns a user payload containing a JWT. The client stores
 
 ## Message flow
 
-1. The client posts `{ content, chatId }` to `/api/message`.
+1. The client posts `{ content, chatId }` for text or `{ imageUrl, chatId }` after a direct Cloudinary upload for an image to `/api/message`.
 2. The server verifies that the authenticated user belongs to the chat.
 3. The server creates and populates the message and updates `Chat.latestMessage`.
 4. The sender emits `new message` through Socket.IO.
 5. The server verifies the socket sender and distributes `message recieved` to other chat members.
 6. The receiving client appends the message or creates a notification.
+
+Messages may contain text, an HTTPS image URL, or both. Browser image selection accepts JPEG, PNG, WebP, and GIF files up to 5 MB; Cloudinary hosts the uploaded asset while MongoDB stores its secure URL.
 
 The misspelled event string `message recieved` is currently part of the internal protocol. Change both server and client together if correcting it.
 

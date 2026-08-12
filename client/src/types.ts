@@ -20,6 +20,7 @@ export interface Message {
   _id: string;
   sender: User;
   content: string;
+  imageUrl?: string;
   chat: Chat;
   createdAt?: string;
   updatedAt?: string;

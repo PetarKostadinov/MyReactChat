@@ -6,15 +6,21 @@ const { isChatMember } = require('../domain/chatPermissions');
 
 
 const sendMessage = asyncHandler(async (req, res) => {
-    const { content, chatId } = req.body;
+    const { content, imageUrl, chatId } = req.body;
+    const trimmedContent = typeof content === 'string' ? content.trim() : '';
+    const trimmedImageUrl = typeof imageUrl === 'string' ? imageUrl.trim() : '';
 
-    if (!content || !chatId) {
-        return res.status(400).send({ message: 'Message content and chat ID are required' });
+    if ((!trimmedContent && !trimmedImageUrl) || !chatId) {
+        return res.status(400).send({ message: 'Message content or an image and chat ID are required' });
+    }
+    if (trimmedImageUrl && !/^https:\/\//i.test(trimmedImageUrl)) {
+        return res.status(400).send({ message: 'Image URL must use HTTPS' });
     }
 
     const newMessage = {
         sender: req.user._id,
-        content: content,
+        content: trimmedContent,
+        imageUrl: trimmedImageUrl || undefined,
         chat: chatId
     };
 

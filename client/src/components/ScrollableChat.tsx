@@ -1,5 +1,5 @@
 import { Avatar } from "@chakra-ui/avatar";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 import { Tooltip } from "@chakra-ui/tooltip";
 import ScrollableFeed from "react-scrollable-feed";
 import { ChatState } from "../Context/ChatProvider";
@@ -62,13 +62,28 @@ const ScrollableChat = ({ messages }: { messages: Message[] }) => {
                                         borderRadius="xl"
                                         borderBottomRightRadius={mine && endsGroup ? "sm" : "xl"}
                                         borderBottomLeftRadius={!mine && endsGroup ? "sm" : "xl"}
-                                        px={3.5}
-                                        py={2}
+                                        px={message.imageUrl ? 1 : 3.5}
+                                        py={message.imageUrl ? 1 : 2}
                                         overflowWrap="anywhere"
                                         lineHeight="base"
                                         boxShadow="sm"
                                     >
-                                        {message.content}
+                                        {message.imageUrl && (
+                                            <Image
+                                                src={message.imageUrl}
+                                                alt={message.content || "Shared photo"}
+                                                maxH={{ base: "280px", md: "380px" }}
+                                                maxW="100%"
+                                                borderRadius="lg"
+                                                objectFit="contain"
+                                                loading="lazy"
+                                            />
+                                        )}
+                                        {message.content && (
+                                            <Text px={message.imageUrl ? 2 : 0} py={message.imageUrl ? 1.5 : 0}>
+                                                {message.content}
+                                            </Text>
+                                        )}
                                     </Box>
                                 </Tooltip>
                                 {endsGroup && message.createdAt && (

@@ -130,7 +130,7 @@ const MyChats = ({ fetchAgain }: Pick<RefreshChatsProps, "fetchAgain">) => {
                                             </Box>
                                             <Text fontSize="sm" color="gray.500" noOfLines={1} mt={0.5}>
                                                 {chat.latestMessage
-                                                    ? `${chat.latestMessage.sender._id === user._id ? "You" : chat.latestMessage.sender.name}: ${chat.latestMessage.content}`
+                                                    ? `${chat.latestMessage.sender._id === user._id ? "You" : chat.latestMessage.sender.name}: ${chat.latestMessage.imageUrl ? "Photo" : chat.latestMessage.content}`
                                                     : "No messages yet"}
                                             </Text>
                                         </Box>

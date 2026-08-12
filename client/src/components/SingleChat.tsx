@@ -1,12 +1,12 @@
 import { FormControl } from "@chakra-ui/form-control";
 import { Box, Text } from "@chakra-ui/layout";
 import "./styles.css";
-import { Avatar, IconButton, Spinner, Textarea, useToast } from "@chakra-ui/react";
+import { Avatar, IconButton, Input, Spinner, Textarea, Tooltip, useToast } from "@chakra-ui/react";
 import { getSender, getSenderFull } from "../config/ChatLogics";
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, KeyboardEvent } from "react";
 import axios from "axios";
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowBackIcon, ArrowForwardIcon, AttachmentIcon } from "@chakra-ui/icons";
 import ProfileModal from "./Miscellaneous/ProfileModal";
 import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
@@ -29,12 +29,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState("");
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [socketConnected, setSocketConnected] = useState(false);
     const [typing, setTyping] = useState(false);
     const [istyping, setIsTyping] = useState(false);
     const typingTimeout = useRef<ReturnType<typeof setTimeout>>();
     const composerRef = useRef<HTMLDivElement>(null);
     const messageInputRef = useRef<HTMLTextAreaElement>(null);
+    const imageInputRef = useRef<HTMLInputElement>(null);
     const toast = useToast();
 
     useKeyboardAvoidance(composerRef);
@@ -103,6 +105,60 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                     position: "bottom",
                 });
             }
+        }
+    };
+
+    const sendImage = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";
+        if (!file || !selectedChat) return;
+
+        const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+        if (!allowedTypes.includes(file.type) || file.size > 5 * 1024 * 1024) {
+            toast({
+                title: "Choose a valid image",
+                description: "Use a JPEG, PNG, WebP, or GIF up to 5 MB.",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+            return;
+        }
+
+        try {
+            setUploadingImage(true);
+            socket?.emit("stop typing", selectedChat._id);
+            const uploadData = new FormData();
+            uploadData.append("file", file);
+            uploadData.append("upload_preset", "kofur1kn");
+            uploadData.append("cloud_name", "dsjxqcrfc");
+            const uploadResponse = await axios.post(
+                "https://api.cloudinary.com/v1_1/dsjxqcrfc/image/upload",
+                uploadData
+            );
+            const imageUrl = uploadResponse.data?.secure_url;
+            if (!imageUrl) throw new Error("Image upload did not return a secure URL");
+
+            const { data } = await axios.post(
+                "/api/message",
+                { imageUrl, chatId: selectedChat._id },
+                authConfig(user.token)
+            );
+            socket?.emit("new message", data);
+            setMessages((currentMessages) => [...currentMessages, data]);
+        } catch (error) {
+            toast({
+                title: "Could not send image",
+                description: "Please try again.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+        } finally {
+            setUploadingImage(false);
+            messageInputRef.current?.focus({ preventScroll: true });
         }
     };
 
@@ -267,6 +323,26 @@ const SingleChat = ({ fetchAgain, setFetchAgain }: RefreshChatsProps) => {
                                 <Box h="24px" />
                             )}
                             <Box display="flex" alignItems="flex-end" gap={2} bg="gray.50" borderWidth="1px" borderColor="gray.200" borderRadius="2xl" p={1.5} _focusWithin={{ borderColor: "brand.500", boxShadow: "0 0 0 1px var(--chakra-colors-brand-500)" }}>
+                                <Input
+                                    ref={imageInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp,image/gif"
+                                    onChange={sendImage}
+                                    display="none"
+                                    aria-hidden="true"
+                                />
+                                <Tooltip label="Upload image" hasArrow>
+                                    <IconButton
+                                        icon={<AttachmentIcon />}
+                                        aria-label="Upload image"
+                                        variant="ghost"
+                                        borderRadius="full"
+                                        flexShrink={0}
+                                        isLoading={uploadingImage}
+                                        isDisabled={uploadingImage}
+                                        onClick={() => imageInputRef.current?.click()}
+                                    />
+                                </Tooltip>
                                 <Textarea
                                     ref={messageInputRef}
                                     variant="unstyled"
