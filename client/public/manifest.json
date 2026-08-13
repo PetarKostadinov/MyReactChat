@@ -1,11 +1,12 @@
 {
-  "short_name": "Talk-A-Tive",
-  "name": "Talk-A-Tive Chat",
+  "short_name": "Chime",
+  "name": "Chime Chat",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "chime-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
       "src": "logo192.png",

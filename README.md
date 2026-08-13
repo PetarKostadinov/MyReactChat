@@ -1,6 +1,6 @@
-# MyReactChat
+# Chime
 
-MyReactChat is a responsive, real-time chat application built with React, Express, MongoDB, and Socket.IO. The source code is written in TypeScript.
+Chime is a responsive, real-time chat application built with React, Express, MongoDB, and Socket.IO. The source code is written in TypeScript.
 
 ## Features
 

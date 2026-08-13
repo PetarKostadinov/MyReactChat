@@ -124,7 +124,7 @@ function SideDrawer() {
                 </Tooltip>
 
                 <Text display={{ base: 'none', sm: 'block' }} fontSize={{ sm: 'lg', md: '2xl' }} fontWeight='bold' letterSpacing='tight'>
-                    Talk-A-Tive
+                    Chime
                 </Text>
                 <Box display="flex" alignItems="center" gap={1}>
                     <Menu>

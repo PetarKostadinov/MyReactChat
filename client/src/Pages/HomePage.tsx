@@ -44,7 +44,7 @@ function HomePage() {
                     letterSpacing='tight'
                     color='gray.800'
                     textAlign='center'
-                >Talk-A-Tive</Text>
+                >Chime</Text>
             </Box>
             <Box
                 bg='whiteAlpha.950'

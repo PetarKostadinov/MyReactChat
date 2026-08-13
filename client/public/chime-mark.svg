@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Chime chat icon</title>
+  <rect width="512" height="512" rx="112" fill="#0e7490"/>
+  <path fill="#fff" d="M112 143c0-31 25-56 56-56h176c31 0 56 25 56 56v131c0 31-25 56-56 56H235l-78 66c-13 11-33 2-33-15v-56c-8-6-12-17-12-28V143Z"/>
+  <circle cx="208" cy="209" r="18" fill="#0e7490"/>
+  <circle cx="272" cy="209" r="18" fill="#0e7490"/>
+  <circle cx="336" cy="209" r="18" fill="#0e7490"/>
+  <circle cx="388" cy="112" r="48" fill="#fb7185" stroke="#fff" stroke-width="18"/>
+</svg>
