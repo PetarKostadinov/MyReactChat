@@ -104,14 +104,6 @@ function Login() {
                 type='submit'>
                 Login
             </Button>
-            <Button
-                variant={'solid'}
-                width={'100%'}
-                colorScheme='gray'
-                onClick={() => { setEmail('guest@example.com'); setPassword('123456'); }}
-            >
-                Login with Guest Credentials
-            </Button>
         </VStack>
     )
 }
