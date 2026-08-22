@@ -4,6 +4,18 @@
 
 Chime is a responsive, real-time chat application built with React, Express, MongoDB, and Socket.IO. The source code is written in TypeScript.
 
+## Live application
+
+- **Application:** [https://mychat-2ce41.web.app/chats](https://mychat-2ce41.web.app/chats)
+
+## Engineering highlights
+
+- Uses one JWT identity across REST requests and Socket.IO connections
+- Enforces chat membership and group-administrator permissions on the server
+- Separates reusable authorization rules from HTTP and socket boundaries
+- Verifies backend and frontend behavior before automated deployment
+- Deploys the client to Firebase Hosting and the TypeScript API to Render
+
 ## Features
 
 - User registration and JWT authentication
